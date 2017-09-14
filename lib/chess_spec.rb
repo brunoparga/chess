@@ -22,6 +22,24 @@ describe Chess do
       expect(board).to be_a(Hash)
     end
   end
+
+  describe "#display_board" do
+    it "displays the current state of the board" do
+      starting_board = <<~BRD
+         a  b  c  d  e  f  g  h
+      8 \e[43m ♖ \e[40m ♘ \e[43m ♗ \e[40m ♕ \e[43m ♔ \e[40m ♗ \e[43m ♘ \e[40m ♖ \e[0m 8
+      7 \e[40m ♙ \e[43m ♙ \e[40m ♙ \e[43m ♙ \e[40m ♙ \e[43m ♙ \e[40m ♙ \e[43m ♙ \e[0m 7
+      6 \e[43m   \e[40m   \e[43m   \e[40m   \e[43m   \e[40m   \e[43m   \e[40m   \e[0m 6
+      5 \e[40m   \e[43m   \e[40m   \e[43m   \e[40m   \e[43m   \e[40m   \e[43m   \e[0m 5
+      4 \e[43m   \e[40m   \e[43m   \e[40m   \e[43m   \e[40m   \e[43m   \e[40m   \e[0m 4
+      3 \e[40m   \e[43m   \e[40m   \e[43m   \e[40m   \e[43m   \e[40m   \e[43m   \e[0m 3
+      2 \e[43m ♟ \e[40m ♟ \e[43m ♟ \e[40m ♟ \e[43m ♟ \e[40m ♟ \e[43m ♟ \e[40m ♟ \e[0m 2
+      1 \e[40m ♜ \e[43m ♞ \e[40m ♝ \e[43m ♛ \e[40m ♚ \e[43m ♝ \e[40m ♞ \e[43m ♜ \e[0m 1
+         a  b  c  d  e  f  g  h
+        BRD
+      expect(game.display_board).to output(starting_board).to_stdout
+    end
+  end
 end
 
 describe Square do
@@ -54,21 +72,21 @@ end
 describe Piece do
 
   describe "#initialize" do
-    let(:piece) { Piece.new(:white) }
+    let(:piece) { Piece.new(:black) }
 
     it "is a Piece" do
       expect(piece).to be_an_instance_of(Piece)
     end
 
     it "is white" do
-      expect(piece.color).to eq(:white)
+      expect(piece.color).to eq(:black)
     end
   end
 end
 
 describe King do
   describe "#initialize" do
-    let(:king) { King.new(:black) }
+    let(:king) { King.new(:white) }
 
     it "is a Piece" do
       expect(king).to be_a(Piece)
@@ -79,7 +97,7 @@ describe King do
     end
 
     it "is black" do
-      expect(king.color).to eq(:black)
+      expect(king.color).to eq(:white)
     end
 
     it "has a symbol of ♚" do
@@ -90,7 +108,7 @@ end
 
 describe Queen do
   describe "#initialize" do
-    let(:queen) { Queen.new(:white) }
+    let(:queen) { Queen.new(:black) }
 
     it "is a Piece" do
       expect(queen).to be_a(Piece)
@@ -101,7 +119,7 @@ describe Queen do
     end
 
     it "is white" do
-      expect(queen.color).to eq(:white)
+      expect(queen.color).to eq(:black)
     end
 
     it "has a symbol of ♕" do
@@ -112,7 +130,7 @@ end
 
 describe Rook do
   describe "#initialize" do
-    let(:rook) { Rook.new(:black) }
+    let(:rook) { Rook.new(:white) }
 
     it "is a Piece" do
       expect(rook).to be_a(Piece)
@@ -123,7 +141,7 @@ describe Rook do
     end
 
     it "is black" do
-      expect(rook.color).to eq(:black)
+      expect(rook.color).to eq(:white)
     end
 
     it "has a symbol of ♜" do
@@ -134,7 +152,7 @@ end
 
 describe Bishop do
   describe "#initialize" do
-    let(:bishop) { Bishop.new(:white) }
+    let(:bishop) { Bishop.new(:black) }
 
     it "is a Piece" do
       expect(bishop).to be_a(Piece)
@@ -145,7 +163,7 @@ describe Bishop do
     end
 
     it "is white" do
-      expect(bishop.color).to eq(:white)
+      expect(bishop.color).to eq(:black)
     end
 
     it "has a symbol of ♗" do
@@ -156,7 +174,7 @@ end
 
 describe Knight do
   describe "#initialize" do
-    let(:knight) { Knight.new(:black) }
+    let(:knight) { Knight.new(:white) }
 
     it "is a Piece" do
       expect(knight).to be_a(Piece)
@@ -167,7 +185,7 @@ describe Knight do
     end
 
     it "is black" do
-      expect(knight.color).to eq(:black)
+      expect(knight.color).to eq(:white)
     end
 
     it "has a symbol of ♞" do
@@ -178,7 +196,7 @@ end
 
 describe Pawn do
   describe "#initialize" do
-    let(:pawn) { Pawn.new(:white) }
+    let(:pawn) { Pawn.new(:black) }
 
     it "is a Piece" do
       expect(pawn).to be_a(Piece)
@@ -189,7 +207,7 @@ describe Pawn do
     end
 
     it "is white" do
-      expect(pawn.color).to eq(:white)
+      expect(pawn.color).to eq(:black)
     end
 
     it "has a symbol of ♙" do
