@@ -5,6 +5,9 @@ describe Chess do
 
   describe "#initialize" do
     context "when initializing the board" do
+      class Chess
+        attr_reader :board
+      end
       it "creates a 64-element hash" do
         expect(game.board.length).to eq(64)
       end
@@ -17,6 +20,10 @@ describe Chess do
   end
 
   describe "#initialize_board" do
+    class Chess
+      attr_reader :board
+    end
+    
     it "is a Hash" do
       board = game.initialize_board
       expect(board).to be_a(Hash)
