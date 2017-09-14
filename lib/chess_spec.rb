@@ -37,7 +37,22 @@ describe Chess do
       1 \e[40m ♜ \e[43m ♞ \e[40m ♝ \e[43m ♛ \e[40m ♚ \e[43m ♝ \e[40m ♞ \e[43m ♜ \e[0m 1
          a  b  c  d  e  f  g  h
         BRD
-      expect(game.display_board).to output(starting_board).to_stdout
+      expect { game.display_board }.to output(starting_board).to_stdout
+    end
+  end
+
+  describe "#display_square" do
+    context "when given a starting a1 square" do
+      let(:square) { Square.new('a', 1) }
+
+      after(:each) do
+        puts "\e[0m"
+      end
+
+      it "prints out a black square with a white rook" do
+        square.piece = Rook.new(:white)
+        expect { game.display_square(square) }.to output("\e[40m ♜ ").to_stdout
+      end
     end
   end
 end
