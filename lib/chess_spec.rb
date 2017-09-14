@@ -1,4 +1,4 @@
-require 'chess'
+require 'chess_class'
 
 describe Chess do
   let(:game) { Chess.new }
