@@ -57,7 +57,7 @@ describe Chess do
       end
 
       it "prints out a black square with a white rook" do
-        square.piece = Rook.new(:white)
+        square.piece = Rook.new(:white, :a1)
         expect { game.display_square(square) }.to output("\e[40m ♜ ").to_stdout
       end
     end
@@ -94,21 +94,25 @@ end
 describe Piece do
 
   describe "#initialize" do
-    let(:piece) { Piece.new(:black) }
+    let(:piece) { Piece.new(:black, :e5) }
 
     it "is a Piece" do
       expect(piece).to be_an_instance_of(Piece)
     end
 
-    it "is white" do
+    it "is black" do
       expect(piece.color).to eq(:black)
+    end
+
+    it "has a position of e5" do
+      expect(piece.position).to eq(:e5)
     end
   end
 end
 
 describe King do
   describe "#initialize" do
-    let(:king) { King.new(:white) }
+    let(:king) { King.new(:white, :e1) }
 
     it "is a Piece" do
       expect(king).to be_a(Piece)
@@ -118,19 +122,23 @@ describe King do
       expect(king).to be_an_instance_of(King)
     end
 
-    it "is black" do
+    it "is white" do
       expect(king.color).to eq(:white)
     end
 
     it "has a symbol of ♚" do
       expect(king.symbol).to eq('♚')
     end
+
+    it "has a position of e1" do
+      expect(king.position).to eq(:e1)
+    end
   end
 end
 
 describe Queen do
   describe "#initialize" do
-    let(:queen) { Queen.new(:black) }
+    let(:queen) { Queen.new(:black, :d8) }
 
     it "is a Piece" do
       expect(queen).to be_a(Piece)
@@ -140,19 +148,23 @@ describe Queen do
       expect(queen).to be_an_instance_of(Queen)
     end
 
-    it "is white" do
+    it "is black" do
       expect(queen.color).to eq(:black)
     end
 
     it "has a symbol of ♕" do
       expect(queen.symbol).to eq('♕')
     end
+
+    it "has a position of d8" do
+      expect(queen.position).to eq(:d8)
+    end
   end
 end
 
 describe Rook do
   describe "#initialize" do
-    let(:rook) { Rook.new(:white) }
+    let(:rook) { Rook.new(:white, :a1) }
 
     it "is a Piece" do
       expect(rook).to be_a(Piece)
@@ -162,19 +174,23 @@ describe Rook do
       expect(rook).to be_an_instance_of(Rook)
     end
 
-    it "is black" do
+    it "is white" do
       expect(rook.color).to eq(:white)
     end
 
     it "has a symbol of ♜" do
       expect(rook.symbol).to eq('♜')
     end
+
+    it "has a position of a1" do
+      expect(rook.position).to eq(:a1)
+    end
   end
 end
 
 describe Bishop do
   describe "#initialize" do
-    let(:bishop) { Bishop.new(:black) }
+    let(:bishop) { Bishop.new(:black, :f8) }
 
     it "is a Piece" do
       expect(bishop).to be_a(Piece)
@@ -184,19 +200,23 @@ describe Bishop do
       expect(bishop).to be_an_instance_of(Bishop)
     end
 
-    it "is white" do
+    it "is black" do
       expect(bishop.color).to eq(:black)
     end
 
     it "has a symbol of ♗" do
       expect(bishop.symbol).to eq('♗')
     end
+
+    it "has a position of f8" do
+      expect(bishop.position).to eq(:f8)
+    end
   end
 end
 
 describe Knight do
   describe "#initialize" do
-    let(:knight) { Knight.new(:white) }
+    let(:knight) { Knight.new(:white, :b1) }
 
     it "is a Piece" do
       expect(knight).to be_a(Piece)
@@ -206,19 +226,23 @@ describe Knight do
       expect(knight).to be_an_instance_of(Knight)
     end
 
-    it "is black" do
+    it "is white" do
       expect(knight.color).to eq(:white)
     end
 
     it "has a symbol of ♞" do
       expect(knight.symbol).to eq('♞')
     end
+
+    it "has a position of b1" do
+      expect(knight.position).to eq(:b1)
+    end
   end
 end
 
 describe Pawn do
   describe "#initialize" do
-    let(:pawn) { Pawn.new(:black) }
+    let(:pawn) { Pawn.new(:black, :a7) }
 
     it "is a Piece" do
       expect(pawn).to be_a(Piece)
@@ -228,12 +252,18 @@ describe Pawn do
       expect(pawn).to be_an_instance_of(Pawn)
     end
 
-    it "is white" do
+    it "is black" do
       expect(pawn.color).to eq(:black)
     end
 
     it "has a symbol of ♙" do
       expect(pawn.symbol).to eq('♙')
     end
+
+    it "has a position of a7" do
+      expect(pawn.position).to eq(:a7)
+    end
   end
+
+  # describe "#move"
 end

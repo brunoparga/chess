@@ -25,32 +25,33 @@ class Chess
   end
 
   def populate_board
+    # Pieces are placed on the board one file at a time.
     pieces_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     8.times do |i|
       eight = "#{(97 + i).chr}8".to_sym
       seven = "#{(97 + i).chr}7".to_sym
       two = "#{(97 + i).chr}2".to_sym
       one = "#{(97 + i).chr}1".to_sym
-      @board[eight].piece = pieces_order[i].new(:black)
-      @board[seven].piece = Pawn.new(:black)
-      @board[two].piece = Pawn.new(:white)
-      @board[one].piece = pieces_order[i].new(:white)
+      @board[eight].piece = pieces_order[i].new(:black, eight)
+      @board[seven].piece = Pawn.new(:black, seven)
+      @board[two].piece = Pawn.new(:white, two)
+      @board[one].piece = pieces_order[i].new(:white, one)
     end
   end
 
   def display_board
     count = 0
-    file = 8
+    rank = 8
     print "   a  b  c  d  e  f  g  h\n"
     @board.each do |position, square|
       if count % 8 == 0
-        print "#{file} "
+        print "#{rank} "
       end
       display_square(square)
       count += 1
       if count % 8 == 0
-        print "\e[0m #{file}\n"
-        file -= 1
+        print "\e[0m #{rank}\n"
+        rank -= 1
       end
     end
     print "   a  b  c  d  e  f  g  h\n"
