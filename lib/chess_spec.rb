@@ -12,8 +12,12 @@ describe Chess do
         expect(game.board.length).to eq(64)
       end
 
-      it "has symbols as keys and Squares as values" do
-        expect(game.board[:a1]).to be_an_instance_of(Square)
+      it "has symbols as keys and Pieces or spaces as values (1)" do
+        expect(game.board[:a1]).to be_a(Piece)
+      end
+
+      it "has symbols as keys and Pieces or spaces as values (2)" do
+        expect(game.board[:a4]).to eq(' ')
       end
 
     end
@@ -23,7 +27,7 @@ describe Chess do
     class Chess
       attr_reader :board
     end
-    
+
     it "is a Hash" do
       board = game.initialize_board
       expect(board).to be_a(Hash)
@@ -50,44 +54,14 @@ describe Chess do
 
   describe "#display_square" do
     context "when given a starting a1 square" do
-      let(:square) { Square.new('a', 1) }
-
       after(:each) do
         puts "\e[0m"
       end
 
       it "prints out a black square with a white rook" do
-        square.piece = Rook.new(:white, :a1)
-        expect { game.display_square(square) }.to output("\e[40m ♜ ").to_stdout
+        expect { game.display_square(:a1) }.to output("\e[40m ♜ ").to_stdout
       end
     end
-  end
-end
-
-describe Square do
-
-  describe "#initialize" do
-
-    context "when initializing a Square" do
-      let(:a_seven) { Square.new('a', 7) }
-
-      it "is a Square" do
-        expect(a_seven).to be_a(Square)
-      end
-
-      it "has the given rank" do
-        expect(a_seven.rank).to eq(7)
-      end
-
-      it "has the given file" do
-        expect(a_seven.file).to eq('a')
-      end
-
-      it "has the correct position" do
-        expect(a_seven.position).to eq(:a7)
-      end
-    end
-
   end
 end
 
@@ -265,5 +239,4 @@ describe Pawn do
     end
   end
 
-  # describe "#move"
 end
