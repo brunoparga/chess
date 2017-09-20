@@ -7,7 +7,8 @@ class Chess
     # The board is a hash. Each key is the symbol of the name of the square
     # (e.g. :a1). The value is either a space or a Piece object.
     @board = initialize_board
-    populate_board
+    @whites_turn = true
+    welcome
   end
 
   def initialize_board
@@ -22,6 +23,66 @@ class Chess
       end
     end
     board
+  end
+
+  def welcome
+    system("clear")
+    puts "Hello, and welcome to Chess!"
+    puts "Please enter 'new' to start a new game or 'load' to load a saved game."
+    puts "You may enter 'quit' to quit."
+    while true
+      choice = gets.chomp.downcase
+      case choice
+      when 'new'
+        play_game
+      when 'load'
+        play_game # TODO
+      when 'quit'
+        exit
+      else
+        puts "I don't understand that command. Please enter 'new', 'load' or 'quit'."
+      end
+    end
+  end
+
+  def play_game
+    system("clear")
+    puts "All right, let's get started."
+    populate_board
+    while true    # MAYBE: later change this to 'while not checkmate'
+      color = (@whites_turn ? :white : :black)
+      system("clear")
+      puts "It is #{color.capitalize}'s turn."   # Replace this with list of moves?
+      display_board
+      puts "#{color.capitalize}, please make your move."
+      print "Square to move from: "
+      from = gets.chomp.to_sym    # add validation?
+      print "Target square: "
+      target = gets.chomp.to_sym
+      result = move(from, target)
+      puts "#{result}"
+      puts "Press any key to continue."
+      gets.chomp
+    end
+  end
+
+  def move(from, target)
+    if @board[from] == ' '
+      return "There is no piece at #{from}!"
+    elsif @board[from].color != (@whites_turn ? :white : :black)
+      return "That is not your piece to move!"
+    elsif from == target
+      return "You must make a move!"
+    else
+      outcome = @board[from].move(@board, target)
+      return outcome if outcome != true
+      @whites_turn = !@whites_turn
+      piece = @board[from]
+      piece.position = target
+      @board[target] = piece
+      @board[from] = ' '
+      return "Valid move."
+    end
   end
 
   def populate_board
@@ -60,8 +121,8 @@ class Chess
   def display_square(position)
     # This uses the ASCII value of ranks ('a' == 97) to determine whether a given
     # square should be light or dark.
-    file = position.to_s[0]
-    rank = position.to_s[1]
+    file = position[0]
+    rank = position[1]
     bgcolor = (file.ord + rank.to_i) % 2 == 0 ? "\e[40m" : "\e[43m"
     if @board[position].is_a?(Piece)
       print "#{bgcolor} #{@board[position].symbol} "
