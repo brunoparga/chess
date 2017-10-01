@@ -10,6 +10,22 @@ class Piece
     @color = color
     @position = position
   end
+
+  def move_1(board)
+    # This is for rooks and queens to move towards rank 8
+    file = @position[0]
+    rank = @position[1]
+    to_move = "#{file}#{rank + 1}".to_sym
+    moves = []
+    while rank < 9 and board[to_move] == ' '
+      moves << to_move
+      rank += 1
+      to_move = "#{file}#{rank + 1}".to_sym
+    end
+    if board[to_move].is_a(Piece) and board[to_move].color != @color
+      moves << to_move
+    end
+  end
 end
 
 class King < Piece
