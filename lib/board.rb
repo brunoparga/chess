@@ -10,7 +10,7 @@ class Board < Hash
     # method first scans the entire file 8, then 7 and so on.
     8.downto(1) do |rank|
       ('a'..'h').each do |file|
-        square = ("#{file}#{rank}").to_sym
+        square = :"#{file}#{rank}"
         self[square] = ' '
       end
     end
@@ -21,10 +21,10 @@ class Board < Hash
     # This is the production version of the board.
     pieces_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     8.times do |file|
-      eight = "#{(97 + file).chr}8".to_sym
-      seven = "#{(97 + file).chr}7".to_sym
-      two = "#{(97 + file).chr}2".to_sym
-      one = "#{(97 + file).chr}1".to_sym
+      eight = :"#{(97 + file).chr}8"
+      seven = :"#{(97 + file).chr}7"
+      two = :"#{(97 + file).chr}2"
+      one = :"#{(97 + file).chr}1"
       self[eight] = pieces_order[file].new(:black, eight)
       self[seven] = Pawn.new(:black, seven)
       self[two] = Pawn.new(:white, two)
@@ -38,8 +38,8 @@ class Board < Hash
     # saving and loading is implemented.
     pieces_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     8.times do |file|
-      eight = "#{(97 + file).chr}8".to_sym
-      one = "#{(97 + file).chr}1".to_sym
+      eight = :"#{(97 + file).chr}8"
+      one = :"#{(97 + file).chr}1"
       self[eight] = pieces_order[file].new(:black, eight)
       self[one] = pieces_order[file].new(:white, one)
     end

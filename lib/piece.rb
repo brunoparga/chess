@@ -21,11 +21,11 @@ class Piece
     rank = @position[1].to_i
     dirs = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]
     moves = []
-    target = "#{(file + dirs[direction][0] + 97).chr}#{rank + dirs[direction][1]}".to_sym
+    target = :"#{(file + dirs[direction][0] + 97).chr}#{rank + dirs[direction][1]}"
     # Pieces can move in a given direction however many squares are free.
     while board[target] == ' '
       moves << target
-      target = "#{((target[0].ord - 97 + dirs[direction][0]) + 97).chr}#{target[1].to_i + dirs[direction][1]}".to_sym
+      target = :"#{((target[0].ord - 97 + dirs[direction][0]) + 97).chr}#{target[1].to_i + dirs[direction][1]}"
     end
     # Pieces can capture enemy pieces.
     if board[target].is_a?(Piece) and board[target].color != @color
@@ -57,21 +57,21 @@ class King < Piece
     dirs = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]
     moves = []
     8.times do |dir|
-      target = "#{(file + dirs[dir][0] + 97).chr}#{rank + dirs[dir][1]}".to_sym
+      target = :"#{(file + dirs[dir][0] + 97).chr}#{rank + dirs[dir][1]}"
       if board[target] == ' ' or
         (board[target].is_a?(Piece) and board[target].color != @color)
         moves << target
       end
     end
     if not @has_moved
-      if board["h#{@position[1]}".to_sym].is_a?(Rook) and
-        (not board["h#{@position[1]}".to_sym].has_moved) and
-        board[:"f#{@position[1]}"]
-        moves << "g#{@position[1]}".to_sym
+      if board[:"h#{@position[1]}"].is_a?(Rook) and
+        (not board[:"h#{@position[1]}"].has_moved) and
+        board[:"f#{@position[1]}"]  # TODO TODO TODO
+        moves << :"g#{@position[1]}"
       end
-      if board["a#{@position[1]}".to_sym].is_a?(Rook) and
-        (not board["a#{@position[1]}".to_sym].has_moved)
-        moves << "c#{@position[1]}".to_sym
+      if board[:"a#{@position[1]}"].is_a?(Rook) and
+        (not board[:"a#{@position[1]}"].has_moved)
+        moves << :"c#{@position[1]}"
 
       end
     end
@@ -154,8 +154,8 @@ class Knight < Piece
     twos = [-2, 2]
     ones.map do |ones|
       twos.map do |twos|
-        target1 = "#{(file + ones + 97).chr}#{rank + twos}".to_sym
-        target2 = "#{(file + twos + 97).chr}#{rank + ones}".to_sym
+        target1 = :"#{(file + ones + 97).chr}#{rank + twos}"
+        target2 = :"#{(file + twos + 97).chr}#{rank + ones}"
         [target1, target2].each do |target|
           if board[target] == ' ' or
             (board[target].is_a?(Piece) and board[target].color != @color)
@@ -182,14 +182,14 @@ class Pawn < Piece
     file = @position[0].ord - 97
     rank = @position[1].to_i
     moves = []
-    target1 = "#{(file + 97).chr}#{rank + direction}".to_sym
+    target1 = :"#{(file + 97).chr}#{rank + direction}"
     # If the space ahead of it is clear...
     if board[target1] == ' '
       # The pawn can move into it.
       moves << target1
       # Furthermore, if it is in its original rank...
       if rank == ((@color == :black) ? 7 : 2)
-        target2 = "#{(file + 97).chr}#{rank + 2 * direction}".to_sym
+        target2 = :"#{(file + 97).chr}#{rank + 2 * direction}"
         # ... and the space two ranks ahead is also clear...
         if board[target2] == ' '
           # It can move two ranks.
@@ -197,8 +197,8 @@ class Pawn < Piece
         end
       end
     end
-    capture1 = "#{(file + 96).chr}#{rank + direction}".to_sym
-    capture2 = "#{(file + 98).chr}#{rank + direction}".to_sym
+    capture1 = :"#{(file + 96).chr}#{rank + direction}"
+    capture2 = :"#{(file + 98).chr}#{rank + direction}"
     # If there's an opposing piece in either adjoining file, in the correct rank...
     [capture1, capture2].each do |target|
       if board[target].is_a?(Piece) and board[target].color != @color
