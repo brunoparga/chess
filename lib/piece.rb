@@ -42,9 +42,12 @@ end
 
 class King < Piece
 
+  attr_writer :has_moved
+
   def initialize(color, position)
     super
     @symbol = (@color == :black) ? '♔' : '♚'
+    @has_moved = false
   end
 
   def moves(board)
@@ -60,6 +63,19 @@ class King < Piece
         moves << target
       end
     end
+    if not @has_moved
+      if board["h#{@position[1]}".to_sym].is_a?(Rook) and
+        (not board["h#{@position[1]}".to_sym].has_moved) and
+        board[:"f#{@position[1]}"]
+        moves << "g#{@position[1]}".to_sym
+      end
+      if board["a#{@position[1]}".to_sym].is_a?(Rook) and
+        (not board["a#{@position[1]}".to_sym].has_moved)
+        moves << "c#{@position[1]}".to_sym
+
+      end
+    end
+
     moves
   end
 
@@ -85,9 +101,12 @@ end
 
 class Rook < Piece
 
+  attr_accessor :has_moved
+
   def initialize(color, position)
     super
     @symbol = (@color == :black) ? '♖' : '♜'
+    @has_moved = false
   end
 
   def moves(board)

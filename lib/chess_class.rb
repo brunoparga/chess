@@ -105,6 +105,9 @@ class Chess
     # Realizes the requested move. Assumes it is valid.
     @board[from].position = target
     @board[target] = @board[from]
+    if @board[target].is_a?(King) or @board[target].is_a?(Rook)
+      @board[target].has_moved = true
+    end
     @board[from] = ' '
   end
 
