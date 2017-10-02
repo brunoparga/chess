@@ -48,13 +48,15 @@ class Chess
   def play_game
     system("clear")
     puts "All right, let's get started."
-    populate_board
+    # populate_board  --> This will be the correct method to call
+    alternate_board     # This is just for testing
     while true    # MAYBE: later change this to 'while not checkmate'
       color = (@whites_turn ? :white : :black)
       system("clear")
       puts "It is #{color.capitalize}'s turn."   # Replace this with list of moves?
       display_board
       puts "#{color.capitalize}, please make your move."
+      puts possible_moves(color)
       print "Square to move from: "
       from = gets.chomp.to_sym    # add validation?
       print "Target square: "
@@ -64,6 +66,21 @@ class Chess
       puts "Press any key to continue."
       gets.chomp
     end
+  end
+
+  def possible_moves(color)
+    moves = Hash.new([])
+    @board.each do |square, piece|
+      if piece.is_a?(Piece) and piece.color == color
+        # Assuming each moves method will return an array of symbols of possible targets
+        moves[square] << piece.moves(@board)
+      end
+    end
+    result = ""
+    moves.each do |square, movelist|
+      result += "Your #{@board[square].to_s} at #{square.to_s} can move to: #{movelist}\n"
+    end
+    result
   end
 
   def move(from, target)
@@ -97,6 +114,24 @@ class Chess
       @board[seven] = Pawn.new(:black, seven)
       @board[two] = Pawn.new(:white, two)
       @board[one] = pieces_order[i].new(:white, one)
+    end
+  end
+
+  def alternate_board
+    pieces_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
+    8.times do |i|
+      eight = "#{(97 + i).chr}8".to_sym
+      one = "#{(97 + i).chr}1".to_sym
+      @board[eight] = pieces_order[i].new(:black, eight)
+      @board[one] = pieces_order[i].new(:white, one)
+    end
+    black_pawns = [:b7, :d7, :g7]
+    black_pawns.each do |square|
+      @board[square] = Pawn.new(:black, square)
+    end
+    white_pawns = [:b2, :d2, :g2]
+    white_pawns.each do |square|
+      @board[square] = Pawn.new(:white, square)
     end
   end
 

@@ -13,21 +13,29 @@ class Piece
   end
 
 
-  def move_1(board)
-    # This is for rooks and queens to move towards rank 8
-    file = @position[0]
-    rank = @position[1]
-    to_move = "#{file}#{rank + 1}".to_sym
+  def possible_moves(board, direction)
+    # Returns an array of symbols of valid targets in a given direction.
+    # Direction 0 is towards rank 8; 1 is towards h8, and so on.
+    # So 0 is 'north' or Blackwards, 7 is 'northwest', 4 is 'south' or Whitewards
+    file = @position[0].ord - 97
+    rank = @position[1].to_i
+    dirs = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]
     moves = []
-    while rank < 9 and board[to_move] == ' '
-      moves << to_move
-      rank += 1
-      to_move = "#{file}#{rank + 1}".to_sym
+    target = "#{(file + dirs[direction][0] + 97).chr}#{rank + dirs[direction][1]}".to_sym
+    while board[target] == ' '
+      moves << target
+      target = "#{((target[0].ord - 97 + dirs[direction][0]) + 97).chr}#{target[1].to_i + dirs[direction][1]}".to_sym
     end
-    if board[to_move].is_a(Piece) and board[to_move].color != @color
-      moves << to_move
+    if board[target].is_a?(Piece) and board[target].color != @color
+      moves << target
     end
+    moves
   end
+
+  def to_s
+    self.class.to_s.downcase
+  end
+
 end
 
 class King < Piece
@@ -35,6 +43,11 @@ class King < Piece
   def initialize(color, position)
     super
     @symbol = (@color == :black) ? '♔' : '♚'
+  end
+
+  def moves(board)
+    # Must return an array of symbols of valid targets
+
   end
 
 end
@@ -46,6 +59,15 @@ class Queen < Piece
     @symbol = (@color == :black) ? '♕' : '♛'
   end
 
+  def moves(board)
+    # Must return an array of symbols of valid targets
+    queen_moves = []
+    8.times do |direction|
+      queen_moves << possible_moves(board, direction)
+    end
+    queen_moves.flatten!
+  end
+
 end
 
 class Rook < Piece
@@ -53,6 +75,15 @@ class Rook < Piece
   def initialize(color, position)
     super
     @symbol = (@color == :black) ? '♖' : '♜'
+  end
+
+  def moves(board)
+    # Must return an array of symbols of valid targets
+    rook_moves = []
+    4.times do |direction|
+      rook_moves << possible_moves(board, direction * 2)
+    end
+    rook_moves.flatten!
   end
 
 end
@@ -64,6 +95,15 @@ class Bishop < Piece
     @symbol = (@color == :black) ? '♗' : '♝'
   end
 
+  def moves(board)
+    # Must return an array of symbols of valid targets
+    bishop_moves = []
+    4.times do |direction|
+      bishop_moves << possible_moves(board, direction * 2 + 1)
+    end
+    bishop_moves.flatten!
+  end
+
 end
 
 class Knight < Piece
@@ -71,6 +111,11 @@ class Knight < Piece
   def initialize(color, position)
     super
     @symbol = (@color == :black) ? '♘' : '♞'
+  end
+
+  def moves(board)
+    # Must return an array of symbols of valid targets
+
   end
 
 end
@@ -82,7 +127,7 @@ class Pawn < Piece
     @symbol = (@color == :black) ? '♙' : '♟'
   end
 
-  def move(board, target)
+  def pawn_move(board, target)
     direction = (@color == :black) ? -1 : 1
     from_file = @position[0]
     from_rank = @position[1].to_i
@@ -122,6 +167,11 @@ class Pawn < Piece
         return "Invalid move: pawns can only move two squares in their first move."
       end
     end
+  end
+
+  def moves(board)
+    # Must return an array of symbols of valid targets
+
   end
 
 end
