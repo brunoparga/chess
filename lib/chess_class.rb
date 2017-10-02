@@ -103,12 +103,32 @@ class Chess
 
   def effect_move(from, target)
     # Realizes the requested move. Assumes it is valid.
-    @board[from].position = target
-    @board[target] = @board[from]
+    if is_castle(from, target)
+      # castling moves
+      rank = (@whites_turn ? 1 : 8)
+      @board[from].position = target
+      @board[target] = @board[from]
+      @board[from] = ' '
+      rook_start = (target == :"g#{rank}" ? :"h#{rank}" : :"a#{rank}")
+      rook_end = (target == :"g#{rank}" ? :"f#{rank}" : :"d#{rank}")
+      @board[rook_start].position = rook_end
+      @board[rook_end] = @board[rook_start]
+      @board[rook_start] = ' '
+    else
+      @board[from].position = target
+      @board[target] = @board[from]
+      @board[from] = ' '
+    end
     if @board[target].is_a?(King) or @board[target].is_a?(Rook)
       @board[target].has_moved = true
     end
-    @board[from] = ' '
+  end
+
+  def is_castle(from, target)
+    rank = (@whites_turn ? 1 : 8)
+    (from == :"e#{rank}" and
+    (target == :"c#{rank}" or target == :"g#{rank}") and
+    @board[from].is_a?(King))
   end
 
 end

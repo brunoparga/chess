@@ -55,28 +55,48 @@ class King < Piece
     file = @position[0].ord - 97
     rank = @position[1].to_i
     dirs = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]
-    moves = []
+    king_moves = []
     8.times do |dir|
       target = :"#{(file + dirs[dir][0] + 97).chr}#{rank + dirs[dir][1]}"
       if board[target] == ' ' or
         (board[target].is_a?(Piece) and board[target].color != @color)
-        moves << target
+        king_moves << target
       end
     end
+    king_moves << can_castle(board)
+    king_moves.flatten!
+  end
+
+  def can_castle(board)
+    # This method tells whether castling is possible. The actual move is
+    # handled elsewhere.
+    file = (@color == :black ? 8 : 1)
+    castle = []
+    # If the king hasn't moved so far in the game...
     if not @has_moved
-      if board[:"h#{@position[1]}"].is_a?(Rook) and
-        (not board[:"h#{@position[1]}"].has_moved) and
-        board[:"f#{@position[1]}"]  # TODO TODO TODO
-        moves << :"g#{@position[1]}"
+      # ...and the kingside rook is at its starting square...
+      if board[:"h#{file}"].is_a?(Rook) and
+        (not board[:"h#{file}"].has_moved) and
+        # ...and the squares between them are empty...
+        # TODO: and those squares are not under attack
+        board[:"f#{file}"] == ' ' and
+        board[:"g#{file}"] == ' '
+        # ... then kingside castling is an option.
+        castle << :"g#{file}"
       end
-      if board[:"a#{@position[1]}"].is_a?(Rook) and
-        (not board[:"a#{@position[1]}"].has_moved)
-        moves << :"c#{@position[1]}"
-
+      # Same here: check if the queenside rook hasn't moved
+      if board[:"a#{file}"].is_a?(Rook) and
+        (not board[:"a#{file}"].has_moved) and
+        # check that the three squares between them are empty
+        # TODO: check for threats to these squares
+        board[:"b#{file}"] == ' ' and
+        board[:"c#{file}"] == ' ' and
+        board[:"d#{file}"] == ' ' and
+        # Queenside castling is an option
+        castle << :"c#{file}"
       end
     end
-
-    moves
+    castle
   end
 
 end
@@ -188,7 +208,7 @@ class Pawn < Piece
       # The pawn can move into it.
       moves << target1
       # Furthermore, if it is in its original rank...
-      if rank == ((@color == :black) ? 7 : 2)
+      if rank == (@color == :black ? 7 : 2)
         target2 = :"#{(file + 97).chr}#{rank + 2 * direction}"
         # ... and the space two ranks ahead is also clear...
         if board[target2] == ' '
