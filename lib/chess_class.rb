@@ -60,7 +60,9 @@ class Chess
       possibilities = possible_moves(color)
       result = ""
       possibilities.each do |square, movelist|
-        result += "Your #{@board[square]} at #{square} can move to: #{movelist}\n"
+        unless movelist.nil?
+          result += "#{@board[square].to_s.capitalize} at #{square} can move to: #{movelist.join(', ')}\n"
+        end
       end
       puts result
       print "Square to move from: "
@@ -81,10 +83,6 @@ class Chess
         # Assuming each moves method will return an array of symbols of possible targets
         moves[square] = piece.moves(@board)
       end
-    end
-    result = ""
-    moves.each do |square, movelist|
-      result += "Your #{@board[square]} at #{square} can move to: #{movelist}\n"
     end
     moves
   end
@@ -142,6 +140,7 @@ class Chess
     white_pawns.each do |square|
       @board[square] = Pawn.new(:white, square)
     end
+    @board[:d5] = Knight.new(:white, :d5)
   end
 
   def display_board
