@@ -33,7 +33,7 @@ class Piece
   end
 
   def to_s
-    self.class.to_s.downcase
+    "#{self.color} #{self.class.to_s.downcase}"
   end
 
 end

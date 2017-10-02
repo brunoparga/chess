@@ -3,12 +3,13 @@ require_relative "piece"
 class Chess
   # A game of chess, playable on the command line.
 
-  def initialize
+  def initialize(play)
     # The board is a hash. Each key is the symbol of the name of the square
     # (e.g. :a1). The value is either a space or a Piece object.
     @board = initialize_board
     @whites_turn = true
-    welcome
+    welcome if play
+    alternate_board if not play
   end
 
   def initialize_board
@@ -56,7 +57,12 @@ class Chess
       puts "It is #{color.capitalize}'s turn."   # Replace this with list of moves?
       display_board
       puts "#{color.capitalize}, please make your move."
-      puts possible_moves(color)
+      possibilities = possible_moves(color)
+      result = ""
+      possibilities.each do |square, movelist|
+        result += "Your #{@board[square]} at #{square} can move to: #{movelist}\n"
+      end
+      puts result
       print "Square to move from: "
       from = gets.chomp.to_sym    # add validation?
       print "Target square: "
@@ -73,14 +79,14 @@ class Chess
     @board.each do |square, piece|
       if piece.is_a?(Piece) and piece.color == color
         # Assuming each moves method will return an array of symbols of possible targets
-        moves[square] << piece.moves(@board)
+        moves[square] = piece.moves(@board)
       end
     end
     result = ""
     moves.each do |square, movelist|
-      result += "Your #{@board[square].to_s} at #{square.to_s} can move to: #{movelist}\n"
+      result += "Your #{@board[square]} at #{square} can move to: #{movelist}\n"
     end
-    result
+    moves
   end
 
   def move(from, target)
@@ -91,7 +97,7 @@ class Chess
     elsif from == target
       return "You must make a move!"
     else
-      outcome = @board[from].move(@board, target)
+      outcome = @board[from].pawn_move(@board, target)
       return outcome if outcome != true
       @whites_turn = !@whites_turn
       piece = @board[from]
@@ -104,6 +110,7 @@ class Chess
 
   def populate_board
     # Pieces are placed on the board one file at a time.
+    # This is the production version of the board.
     pieces_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     8.times do |i|
       eight = "#{(97 + i).chr}8".to_sym
@@ -118,6 +125,8 @@ class Chess
   end
 
   def alternate_board
+    # This is a simplified board, for testing purposes.
+    # This method should be stored away when dev is done.
     pieces_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     8.times do |i|
       eight = "#{(97 + i).chr}8".to_sym
@@ -125,11 +134,11 @@ class Chess
       @board[eight] = pieces_order[i].new(:black, eight)
       @board[one] = pieces_order[i].new(:white, one)
     end
-    black_pawns = [:b7, :d7, :g7]
+    black_pawns = [:c7, :e7, :f7]
     black_pawns.each do |square|
       @board[square] = Pawn.new(:black, square)
     end
-    white_pawns = [:b2, :d2, :g2]
+    white_pawns = [:c2, :e2, :f2]
     white_pawns.each do |square|
       @board[square] = Pawn.new(:white, square)
     end
