@@ -42,11 +42,11 @@ class Board < Hash
       self[eight] = pieces_order[file].new(:black, eight)
       self[one] = pieces_order[file].new(:white, one)
     end
-    black_pawns = [:c7, :e7, :f7]
+    black_pawns = [:b6, :e7, :f7]
     black_pawns.each do |square|
       self[square] = Pawn.new(:black, square)
     end
-    white_pawns = [:c2, :e2, :f2]
+    white_pawns = [:c2, :e3, :f2]
     white_pawns.each do |square|
       self[square] = Pawn.new(:white, square)
     end

@@ -4,12 +4,12 @@ require_relative "board"
 class Chess
   # A game of chess, playable on the command line.
 
-  def initialize(play)
+  def initialize
     # The board is a hash. Each key is the symbol of the name of the square
     # (e.g. :a1). The value is either a space or a Piece object.
     @board = Board.new
     @whites_turn = true
-    welcome if play
+    welcome
   end
 
   def welcome
@@ -22,8 +22,10 @@ class Chess
       case choice
       when 'new'
         play_game
+      when 'test'
+        play_game(true)
       when 'load'
-        play_game # TODO
+        play_game # TODO saving and loading
       when 'quit'
         exit
       else
@@ -32,37 +34,27 @@ class Chess
     end
   end
 
-  def play_game
+  def play_game(testing = false)
     system("clear")
     puts "All right, let's get started."
-    # @board.populate  --> This will be the correct method to call
-    @board.alternate     # This is just for testing
+    @board.populate if not testing # This will be the correct method to call
+    @board.alternate if testing    # This is just for testing
     while true    # MAYBE: later change this to 'while not checkmate'
       color = (@whites_turn ? :white : :black)
       system("clear")
-      puts "It is #{color.capitalize}'s turn."   # Replace this with list of moves?
+      puts "#{color.capitalize} to move."   # Replace this with list of moves?
       @board.display
-      puts "#{color.capitalize}, please make your move."
-      possibilities = possible_moves(color)
-      result = ""
-      possibilities.each do |square, movelist|
-        unless movelist.nil?
-          result += "#{@board[square].to_s.capitalize} at #{square} can move to: #{movelist.join(', ')}\n"
-        end
-      end
-      puts result
-      print "Square to move from: "
-      from = gets.chomp.to_sym    # add validation?
-      print "Target square: "
-      target = gets.chomp.to_sym
-      result = move(from, target)
-      puts "#{result}"
-      puts "Press any key to continue."
-      gets.chomp
+      possible = possible_moves(color)
+      print_moves(possible)
+      from, target = prompt(possible)
+      effect_move(from, target)
+      @whites_turn = !@whites_turn
     end
   end
 
   def possible_moves(color)
+    # This outputs a hash where the keys are squares and the values are arrays
+    # of squares reachable from the key.
     moves = Hash.new([])
     @board.each do |square, piece|
       if piece.is_a?(Piece) and piece.color == color
@@ -73,23 +65,47 @@ class Chess
     moves
   end
 
-  def move(from, target)
-    if @board[from] == ' '
-      return "There is no piece at #{from}!"
-    elsif @board[from].color != (@whites_turn ? :white : :black)
-      return "That is not your piece to move!"
-    elsif from == target
-      return "You must make a move!"
-    else
-      outcome = @board[from].pawn_move(@board, target)
-      return outcome if outcome != true
-      @whites_turn = !@whites_turn
-      piece = @board[from]
-      piece.position = target
-      @board[target] = piece
-      @board[from] = ' '
-      return "Valid move."
+  def print_moves(possible)
+    # This takes in a possible_moves hash and prints it out.
+    result = ""
+    possible.each do |square, movelist|
+      unless movelist.empty?
+        result += "#{@board[square].to_s.capitalize} at #{square} can move to: #{movelist.join(', ')}\n"
+      end
     end
+    puts result
+  end
+
+  def prompt(possible)
+    # For the time being, this assumes the player enter valid, existing squares.
+    # The argument is a hash of possible_moves.
+    from, target = nil
+    loop do
+      print "Square to move from: "
+      from = gets.chomp.to_sym
+      if possible[from].empty?
+        puts "That is not a valid start for a move."
+      else
+        break
+      end
+    end    # add more validation?
+    loop do
+      print "Target square: "
+      target = gets.chomp.to_sym
+      if possible[from].include?(target)
+        break
+      else
+        puts "You cannot move to #{target} from #{from}."
+      end
+    end
+    return from, target
+  end
+
+  def effect_move(from, target)
+    # Realizes the requested move. Assumes it is valid.
+    @board[from].position = target
+    @board[target] = @board[from]
+    @board[from] = ' '
   end
 
 end

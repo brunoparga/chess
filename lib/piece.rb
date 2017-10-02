@@ -212,7 +212,7 @@ class Pawn < Piece
       # The pawn can move into it.
       moves << target1
       # Furthermore, if it is in its original rank...
-      if rank == (@color == :black) ? 7 : 2
+      if rank == ((@color == :black) ? 7 : 2)
         target2 = "#{(file + 97).chr}#{rank + 2 * direction}".to_sym
         # ... and the space two ranks ahead is also clear...
         if board[target2] == ' '
