@@ -83,10 +83,10 @@ class Chess
     loop do
       print "Square to move from: "
       from = gets.chomp.to_sym
-      if possible[from].empty?
-        puts "That is not a valid start for a move."
-      else
+      if not possible[from].empty?
         break
+      else
+        puts "That is not a valid start for a move."
       end
     end    # add more validation?
     loop do

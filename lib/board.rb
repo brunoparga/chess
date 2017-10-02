@@ -33,8 +33,9 @@ class Board < Hash
   end
 
   def alternate
-    # This is a simplified board, for testing purposes.
-    # This method should be stored away when dev is done.
+    # This is a simplified board, for testing purposes. This method should be
+    # stored away when dev is done. It can also be replaced once gamestate
+    # saving and loading is implemented.
     pieces_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     8.times do |file|
       eight = "#{(97 + file).chr}8".to_sym
@@ -53,6 +54,7 @@ class Board < Hash
   end
 
   def display
+    # Prints out the board to the terminal.
     count = 0
     rank = 8
     print "   a  b  c  d  e  f  g  h\n"
