@@ -8,15 +8,14 @@ class Chess
   # A game of chess, playable on the command line.
 
   include Move_checker    # A module that verifies moves.
-  attr_accessor :board if @testing
+  attr_accessor :board
 
-  def initialize(testing = false)
+  def initialize
     # The board is a hash. Each key is the symbol of the name of the square
     # (e.g. :a1). The value is either a space or a Piece object.
     @board = Board.new
     @whites_turn = true
-    @testing = testing
-    welcome if not @testing
+    welcome
   end
 
   def welcome

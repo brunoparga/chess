@@ -1,3 +1,3 @@
 require_relative 'lib/chess_class'
 
-game = Chess.new(ARGV[0])
+game = Chess.new

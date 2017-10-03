@@ -12,6 +12,14 @@ class Piece
     @position = position
   end
 
+  def white(piece)
+    "\e[37;1m#{piece}"
+  end
+
+  def black(piece)
+    "\e[30m#{piece}"
+  end
+
   def possible_moves(board, direction)
     # Used by queens, rooks and bishops.
     # Returns an array of symbols of valid targets in a given direction.

@@ -6,7 +6,7 @@ class Queen < Piece
 
   def initialize(color, position)
     super
-    @symbol = (@color == :black) ? '♕' : '♛'
+    @symbol = (@color == :black) ? black("♛") : white("♛")
   end
 
   def moves(board)
@@ -26,7 +26,7 @@ class Rook < Piece
 
   def initialize(color, position)
     super
-    @symbol = (@color == :black) ? '♖' : '♜'
+    @symbol = (@color == :black) ? black("♜") : white("♜")
     @has_moved = false
   end
 
@@ -45,7 +45,7 @@ class Bishop < Piece
 
   def initialize(color, position)
     super
-    @symbol = (@color == :black) ? '♗' : '♝'
+    @symbol = (@color == :black) ? black("♝") : white("♝")
   end
 
   def moves(board)
@@ -63,7 +63,7 @@ class Knight < Piece
 
   def initialize(color, position)
     super
-    @symbol = (@color == :black) ? '♘' : '♞'
+    @symbol = (@color == :black) ? black("♞") : white("♞")
   end
 
   def moves(board)

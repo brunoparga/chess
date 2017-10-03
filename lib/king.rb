@@ -9,7 +9,7 @@ class King < Piece
 
   def initialize(color, position)
     super
-    @symbol = (@color == :black) ? '♔' : '♚'
+    @symbol = (@color == :black) ? black("♚") : white("♚")
     @has_moved = false
   end
 
@@ -64,9 +64,9 @@ class King < Piece
     return false if side == :queenside and board[:"b#{rank}"] != ' '
     pass.each { |square| return false if board[square] != ' '}
     opponent = (@color == :black ? :white : :black)
-    opp_possible = possible_moves(board, opponent)
+    opp_possible = possible_moves(board, opponent).values.flatten
     pass.each do |square|
-      return false if opp_possible.values.flatten.include?(square)
+      return false if opp_possible.include?(square)
     end
     return true
   end

@@ -4,7 +4,7 @@ class Pawn < Piece
 
   def initialize(color, position)
     super
-    @symbol = (@color == :black) ? '♙' : '♟'
+    @symbol = (@color == :black) ? black("♟") : white("♟")
   end
 
   def moves(board)

@@ -77,9 +77,9 @@ class Board < Hash
     # square should be light or dark.
     file = position[0]
     rank = position[1]
-    bgcolor = (file.ord + rank.to_i) % 2 == 0 ? "\e[40m" : "\e[43m"
+    bgcolor = (file.ord + rank.to_i) % 2 == 0 ? "\e[48;5;8m" : "\e[48;5;7m"
     if self[position].is_a?(Piece)
-      print "#{bgcolor} #{self[position].symbol} "
+      print "\e[0m#{bgcolor} #{self[position].symbol} "
     else
       print "#{bgcolor}   "
     end
