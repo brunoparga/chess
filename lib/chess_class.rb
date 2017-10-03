@@ -8,13 +8,15 @@ class Chess
   # A game of chess, playable on the command line.
 
   include Move_checker    # A module that verifies moves.
+  attr_accessor :board if @testing
 
-  def initialize
+  def initialize(testing = false)
     # The board is a hash. Each key is the symbol of the name of the square
     # (e.g. :a1). The value is either a space or a Piece object.
     @board = Board.new
     @whites_turn = true
-    welcome
+    @testing = testing
+    welcome if not @testing
   end
 
   def welcome
@@ -39,11 +41,11 @@ class Chess
     end
   end
 
-  def play_game(testing = false)
+  def play_game(test_board = false)
     system("clear")
     puts "All right, let's get started."
-    @board.populate if not testing # This will be the correct method to call
-    @board.alternate if testing    # This is just for testing
+    @board.populate if not test_board # This will be the correct method to call
+    @board.alternate if test_board    # This is just for testing
     while true    # MAYBE: later change this to 'while not checkmate'
       color = (@whites_turn ? :white : :black)
       system("clear")

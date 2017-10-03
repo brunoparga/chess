@@ -1,6 +1,9 @@
 require_relative "piece"
+require_relative "move_checker"
 
 class King < Piece
+
+  include Move_checker
 
   attr_writer :has_moved
 
@@ -37,23 +40,16 @@ class King < Piece
       # ...and the kingside rook is at its starting square...
       if board[:"h#{rank}"].is_a?(Rook) and
         (not board[:"h#{rank}"].has_moved) and
-        # ...and the squares between them are empty...
-        # TODO: and those squares are not under attack
-        # squares(kingside, rank)
-        board[:"f#{rank}"] == ' ' and
-        board[:"g#{rank}"] == ' '
+        # ...and the squares between them are empty and not under attack...
+        squares(board, :kingside, rank)
         # ... then kingside castling is an option.
         castle << :"g#{rank}"
       end
       # Same here: check if the queenside rook hasn't moved
       if board[:"a#{rank}"].is_a?(Rook) and
         (not board[:"a#{rank}"].has_moved) and
-        # check that the three squares between them are empty
-        # TODO: check for threats to these squares
-        # squares(queenside, rank)
-        board[:"b#{rank}"] == ' ' and
-        board[:"c#{rank}"] == ' ' and
-        board[:"d#{rank}"] == ' ' and
+        # the three squares between them are empty and unthreatened
+        squares(board, :queenside, rank)
         # Queenside castling is an option
         castle << :"c#{rank}"
       end
@@ -61,10 +57,18 @@ class King < Piece
     castle
   end
 
-  def squares(side, rank)
-    pass = [:"f#{rank}", :"g#{rank}"] if side == kingside
-    pass = [:"c#{rank}", :"d#{rank}"] if side == queenside
+  def squares(board, side, rank)
+    # Verify that the necessary squares are free and unthreatened for castling.
+    pass = [:"f#{rank}", :"g#{rank}"] if side == :kingside
+    pass = [:"c#{rank}", :"d#{rank}"] if side == :queenside
+    return false if side == :queenside and board[:"b#{rank}"] != ' '
+    pass.each { |square| return false if board[square] != ' '}
     opponent = (@color == :black ? :white : :black)
+    opp_possible = possible_moves(board, opponent)
+    pass.each do |square|
+      return false if opp_possible.values.flatten.include?(square)
+    end
+    return true
   end
 
 end
