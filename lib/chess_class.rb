@@ -2,9 +2,12 @@ require_relative "king"
 require_relative "QRBN"
 require_relative "pawn"
 require_relative "board"
+require_relative "move_checker"
 
 class Chess
   # A game of chess, playable on the command line.
+
+  include Move_checker    # A module that verifies moves.
 
   def initialize
     # The board is a hash. Each key is the symbol of the name of the square
@@ -46,41 +49,17 @@ class Chess
       system("clear")
       puts "#{color.capitalize} to move."   # Replace this with list of moves?
       @board.display
-      possible = possible_moves(color)
-      print_moves(possible)
+      possible = possible_moves(@board, color)
+      print_moves(@board, possible)
       from, target = prompt(possible)
       effect_move(from, target)
       @whites_turn = !@whites_turn
     end
   end
 
-  def possible_moves(color)
-    # This outputs a hash where the keys are squares and the values are arrays
-    # of squares reachable from the key.
-    moves = Hash.new([])
-    @board.each do |square, piece|
-      if piece.is_a?(Piece) and piece.color == color
-        # Assuming each moves method will return an array of symbols of possible targets
-        moves[square] = piece.moves(@board)
-      end
-    end
-    moves
-  end
-
-  def print_moves(possible)
-    # This takes in a possible_moves hash and prints it out.
-    result = ""
-    possible.each do |square, movelist|
-      unless movelist.empty?
-        result += "#{@board[square].to_s.capitalize} at #{square} can move to: #{movelist.join(', ')}\n"
-      end
-    end
-    puts result
-  end
-
   def prompt(possible)
-    # For the time being, this assumes the player enters valid, existing squares.
-    # The argument is a hash of possible_moves.
+    # This validates the player's input by rejecting any input that's not on the
+    # list of valid moves. The argument is a hash of possible_moves.
     from, target = nil
     loop do
       print "Square to move from: "
