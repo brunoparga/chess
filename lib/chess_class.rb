@@ -44,10 +44,11 @@ class Chess
     puts "All right, let's get started."
     @board.populate if not test_board # This will be the correct method to call
     @board.alternate if test_board    # This is just for testing
+    checkmate = false
     while true    # MAYBE: later change this to 'while not checkmate'
       color = (@board.whites_turn ? :white : :black)
       system("clear")
-      puts "#{color.capitalize} to move."   # Replace this with list of moves?
+      puts "#{color.capitalize} to move."
       puts "#{color.capitalize} is in check." if is_check?(@board, color)
       @board.display
       possible = possible_moves(@board, color)
@@ -55,6 +56,7 @@ class Chess
       from, target = prompt(possible)
       effect_move(from, target)
       @board.whites_turn = !@board.whites_turn
+      gets.chomp
     end
   end
 

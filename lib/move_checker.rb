@@ -8,14 +8,14 @@ module Move_checker
   def possible_moves(board, color)
     # This outputs a hash where the keys are squares and the values are arrays
     # of squares reachable from the key.
-    moves = Hash.new([])
+    possible = Hash.new([])
     board.each do |square, piece|
       if piece.is_a?(Piece) and piece.color == color
         # Assuming each moves method will return an array of symbols of possible targets
-        moves[square] = piece.moves(board)
+        possible[square] = piece.moves(board)
       end
     end
-    moves
+    possible
   end
 
   def print_moves(board, possible)

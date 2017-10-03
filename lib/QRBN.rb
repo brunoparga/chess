@@ -13,7 +13,7 @@ class Queen < Piece
     # Must return an array of symbols of valid targets
     queen_moves = []
     8.times do |direction|
-      queen_moves << possible_moves(board, direction)
+      queen_moves << piece_moves(board, direction)
     end
     queen_moves.flatten!
   end
@@ -34,7 +34,7 @@ class Rook < Piece
     # Must return an array of symbols of valid targets
     rook_moves = []
     4.times do |direction|
-      rook_moves << possible_moves(board, direction * 2)
+      rook_moves << piece_moves(board, direction * 2)
     end
     rook_moves.flatten!
   end
@@ -52,7 +52,7 @@ class Bishop < Piece
     # Must return an array of symbols of valid targets
     bishop_moves = []
     4.times do |direction|
-      bishop_moves << possible_moves(board, direction * 2 + 1)
+      bishop_moves << piece_moves(board, direction * 2 + 1)
     end
     bishop_moves.flatten!
   end
