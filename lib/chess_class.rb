@@ -48,16 +48,17 @@ class Chess
     while true    # MAYBE: later change this to 'while not checkmate'
       color = (@board.whites_turn ? :white : :black)
       system("clear")
-      puts "#{color.capitalize} to move."   # Replace this with list of moves?
+      puts "#{color.capitalize} to move."
       puts "#{color.capitalize} is in check." if is_check?(@board, color)
       @board.display
       possible = possible_moves(@board, color)
-      possible = prune(@board, possible)
-      win_or_draw(@board, possible, color)
       print_moves(@board, possible)
-      from, target = prompt(possible)
+      pruned = prune(@board, possible)
+      win_or_draw(@board, pruned, color)
+      from, target = prompt(pruned)
       effect_move(from, target)
       @board.whites_turn = !@board.whites_turn
+      gets.chomp
     end
   end
 
@@ -88,8 +89,10 @@ class Chess
   def effect_move(from, target)
     # Realizes the requested move. Assumes it is valid.
     if is_castle(from, target)
+      puts "Castling."
       castle(from, target)
     elsif is_promotion(from, target)
+      puts "Promoting the pawn."
       promote(from, target)
     else
       @board[from].position = target
