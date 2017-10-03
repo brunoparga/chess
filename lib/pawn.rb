@@ -14,9 +14,11 @@ class Pawn < Piece
     rank = @position[1].to_i
     moves = []
     target1 = :"#{(file + 97).chr}#{rank + direction}"
+    # print "Square ahead of pawn at #{@position} is #{target1}. "
     # If the space ahead of it is clear...
     if board[target1] == ' '
       # The pawn can move into it.
+      # print "Square #{target1} is empty. Adding it to pawn at #{position}'s moves.\n"
       moves << target1
       # Furthermore, if it is in its original rank...
       if rank == (@color == :black ? 7 : 2)

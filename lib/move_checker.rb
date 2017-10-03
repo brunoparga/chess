@@ -8,14 +8,36 @@ module Move_checker
   def possible_moves(board, color)
     # This outputs a hash where the keys are squares and the values are arrays
     # of squares reachable from the key.
-    moves = Hash.new([])
+    possible = Hash.new([])
     board.each do |square, piece|
       if piece.is_a?(Piece) and piece.color == color
         # Assuming each moves method will return an array of symbols of possible targets
-        moves[square] = piece.moves(board)
+        possible[square] = piece.moves(board)
       end
     end
-    moves
+    possible
+  end
+
+  def prune(board, possible)
+    # Remove the moves that would put the player in check.
+    possible.each do |from, targetlist|
+      targetlist.each do |target|
+        if puts_in_check?(from, target, board)
+          targetlist.delete(target)
+        end
+      end
+    end
+    possible
+  end
+
+  def win_or_draw(board, possible, color)
+    return if not possible.empty?
+    if is_check?(board, color)
+      puts "Checkmate! #{(color == :black ? "White" : "Black")} wins."
+    else
+      puts "Stalemate! It's a draw."
+    end
+
   end
 
   def print_moves(board, possible)

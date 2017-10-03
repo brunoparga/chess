@@ -44,6 +44,7 @@ class Chess
     puts "All right, let's get started."
     @board.populate if not test_board # This will be the correct method to call
     @board.alternate if test_board    # This is just for testing
+    checkmate = false
     while true    # MAYBE: later change this to 'while not checkmate'
       color = (@board.whites_turn ? :white : :black)
       system("clear")
@@ -51,6 +52,8 @@ class Chess
       puts "#{color.capitalize} is in check." if is_check?(@board, color)
       @board.display
       possible = possible_moves(@board, color)
+      possible = prune(@board, possible)
+      win_or_draw(@board, possible, color)
       print_moves(@board, possible)
       from, target = prompt(possible)
       effect_move(from, target)
@@ -75,8 +78,7 @@ class Chess
       print "Target square: "
       target = gets.chomp.to_sym
       if possible[from].include?(target)
-        check = puts_in_check?(from, target, @board)
-        break if not check
+        break
       end
       puts "You cannot move from #{from} to #{target}."
     end
