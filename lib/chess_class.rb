@@ -1,4 +1,6 @@
-require_relative "piece"
+require_relative "king"
+require_relative "QRBN"
+require_relative "pawn"
 require_relative "board"
 
 class Chess
