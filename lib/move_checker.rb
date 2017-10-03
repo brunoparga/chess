@@ -27,7 +27,10 @@ module Move_checker
         end
       end
     end
+<<<<<<< HEAD
     possible
+=======
+>>>>>>> a288bc2696460e61d816446a49b0803b6f87c7f4
   end
 
   def win_or_draw(board, possible, color)
