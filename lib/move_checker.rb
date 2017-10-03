@@ -29,4 +29,28 @@ module Move_checker
     puts result
   end
 
+  def puts_in_check?(from, target, board)
+    # Verifies if a given move would put the player in check.
+    hypothetical_board = Board[board]
+    hypothetical_board[from].position = target
+    hypothetical_board[target] = hypothetical_board[from]
+    hypothetical_board[from] = ' '
+    hypothetical_board.whites_turn = board.whites_turn
+    color = (hypothetical_board.whites_turn ? :white : :black)
+    is_check?(hypothetical_board, color)
+  end
+
+  def is_check?(board, color)
+    # Verifies if the color given as an argument is in check.
+    opponent = (color == :black ? :white : :black)
+    opp_possible = possible_moves(board, opponent).values.flatten
+    opp_possible.include?(find_king(board, color))
+  end
+
+  def find_king(board, color)
+    board.each do |square, piece|
+      return square if piece.is_a?(King) and piece.color == color
+    end
+  end
+
 end

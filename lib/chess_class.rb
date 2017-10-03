@@ -14,7 +14,6 @@ class Chess
     # The board is a hash. Each key is the symbol of the name of the square
     # (e.g. :a1). The value is either a space or a Piece object.
     @board = Board.new
-    @whites_turn = true
     welcome
   end
 
@@ -46,15 +45,16 @@ class Chess
     @board.populate if not test_board # This will be the correct method to call
     @board.alternate if test_board    # This is just for testing
     while true    # MAYBE: later change this to 'while not checkmate'
-      color = (@whites_turn ? :white : :black)
+      color = (@board.whites_turn ? :white : :black)
       system("clear")
       puts "#{color.capitalize} to move."   # Replace this with list of moves?
+      puts "#{color.capitalize} is in check." if is_check?(@board, color)
       @board.display
       possible = possible_moves(@board, color)
       print_moves(@board, possible)
       from, target = prompt(possible)
       effect_move(from, target)
-      @whites_turn = !@whites_turn
+      @board.whites_turn = !@board.whites_turn
     end
   end
 
@@ -75,10 +75,10 @@ class Chess
       print "Target square: "
       target = gets.chomp.to_sym
       if possible[from].include?(target)
-        break
-      else
-        puts "You cannot move to #{target} from #{from}."
+        check = puts_in_check?(from, target, @board)
+        break if not check
       end
+      puts "You cannot move from #{from} to #{target}."
     end
     return from, target
   end
@@ -100,14 +100,14 @@ class Chess
   end
 
   def is_castle(from, target)
-    rank = (@whites_turn ? 1 : 8)
+    rank = (@board.whites_turn ? 1 : 8)
     (from == :"e#{rank}" and
     (target == :"c#{rank}" or target == :"g#{rank}") and
     @board[from].is_a?(King))
   end
 
   def castle(from, target)
-    rank = (@whites_turn ? 1 : 8)
+    rank = (@board.whites_turn ? 1 : 8)
     @board[from].position = target
     @board[target] = @board[from]
     rook_start = (target == :"g#{rank}" ? :"h#{rank}" : :"a#{rank}")
@@ -118,7 +118,7 @@ class Chess
   end
 
   def is_promotion(from, target)
-    rank = (@whites_turn ? 8 : 1).to_s
+    rank = (@board.whites_turn ? 8 : 1).to_s
     @board[from].is_a?(Pawn) and target[1] == rank
   end
 
@@ -128,7 +128,7 @@ class Chess
     choice = gets.chomp.upcase
     case choice
     when 'R'
-      @board[target] = Rook.new((@whites_turn ? :white : :black), target)
+      @board[target] = Rook.new((@board.whites_turn ? :white : :black), target)
       # The next line is ****EXTREMELY IMPORTANT****
       # I repeat, it is ****EXTREMELY IMPORTANT****
       # It might be the single most important line in all of the program
@@ -136,11 +136,11 @@ class Chess
       # promotion cannot castle. Thank you for saving chess, FIDE!
       @board[target].has_moved = true
     when 'B'
-      @board[target] = Bishop.new((@whites_turn ? :white : :black), target)
+      @board[target] = Bishop.new((@board.whites_turn ? :white : :black), target)
     when 'K', 'N'
-      @board[target] = Knight.new((@whites_turn ? :white : :black), target)
+      @board[target] = Knight.new((@board.whites_turn ? :white : :black), target)
     else
-      @board[target] = Queen.new((@whites_turn ? :white : :black), target)
+      @board[target] = Queen.new((@board.whites_turn ? :white : :black), target)
     end
   end
 
