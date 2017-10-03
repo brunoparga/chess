@@ -65,20 +65,17 @@ class Chess
     loop do
       print "Square to move from: "
       from = gets.chomp.to_sym
-      if not possible[from].empty?
-        break
-      else
-        puts "That is not a valid start for a move."
-      end
-    end
-    loop do
       print "Target square: "
       target = gets.chomp.to_sym
-      if possible[from].include?(target)
-        check = puts_in_check?(from, target, @board)
-        break if not check
+      if possible[from].empty?
+        puts "That is not a valid start for a move."
+      elsif not possible[from].include?(target)
+        puts "You cannot move from #{from} to #{target}."
+      elsif puts_in_check?(from, target, @board)
+        puts "You cannot put yourself into check."
+      else
+        break
       end
-      puts "You cannot move from #{from} to #{target}."
     end
     return from, target
   end
