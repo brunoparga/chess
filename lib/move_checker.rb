@@ -58,4 +58,18 @@ module Move_checker
     end
   end
 
+  def is_game_over(in_check, possible)
+    # Returns true if the game is over either due to a checkmate or a stalemate.
+    puts "Checking if the game is over."
+    return false if not possible.empty?
+    puts "There are no possible moves."
+    if in_check
+      puts "Checkmate! #{self.board.whites_turn == true ? "Black" : "White"} wins."
+    else
+      puts "Stalemate. It's a draw."
+    end
+    gets
+    return true
+  end
+
 end

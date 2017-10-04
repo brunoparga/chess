@@ -18,11 +18,12 @@ class Chess
   end
 
   def welcome
-    system("clear")
-    puts "Hello, and welcome to Chess!"
-    puts "Please enter 'new' to start a new game or 'load' to load a saved game."
-    puts "You may enter 'quit' to quit."
-    while true
+    # Maybe this should be in ../chess.rb
+    loop do
+      system("clear")
+      puts "Hello, and welcome to Chess!"
+      puts "Please enter 'new' to start a new game or 'load' to load a saved game."
+      puts "You may enter 'quit' to quit."
       choice = gets.chomp.downcase
       case choice
       when 'new'
@@ -42,16 +43,16 @@ class Chess
   def play_game(test_board = false)
     @board.populate if not test_board # This will be the correct method to call
     @board.alternate if test_board    # This is just for testing
-    checkmate = false
-    while true    # MAYBE: later change this to 'while not checkmate'
+    loop do
       color = (@board.whites_turn ? :white : :black)
       system("clear")
       puts "#{color.capitalize} to move."
       in_check = is_check?(@board, color)
       puts "#{color.capitalize} is in check." if in_check
       @board.display
-      possible = possible_moves(@board, color) unless in_check
-      possible = evade_check(@board, color) if in_check
+      possible = possible_moves(@board, color)
+      possible = evade_check(@board, color, possible) if in_check
+      break if is_game_over(in_check, possible)
       print_moves(@board, possible)
       from, target = prompt(possible)
       effect_move(from, target)
@@ -82,17 +83,16 @@ class Chess
     return from, target
   end
 
-  def evade_check(board, color)
+  def evade_check(board, color, possible)
     puts "In evade_check. "
-    possible = possible_moves(board, color)
+    movehash = possible
     # NOTE These nested enumerators are what's in common between this method and
     # #prune, from 'fubar'. The problem must be here. NOTE
-    possible.each do |from, movelist|
+    movehash.each do |from, movelist|
       @board = board
       helper = movelist.dup
       puts "Analyzing #{board[from]} at #{from}/#{board[from].position}: #{movelist.join(', ')}"
       helper.each do |target|
-        puts "Target #{target}."
         hypothetical_board = Board[board]
         hypothetical_board.whites_turn = board.whites_turn
         hypothetical_board[from].position = target
@@ -100,15 +100,17 @@ class Chess
         hypothetical_board[from] = ' '
         if is_check?(hypothetical_board, color)
           movelist.delete(target)
-          puts "Removing #{target}. Remaining move list: #{movelist.join(', ')}"
+          puts "Removing #{target}."
         end
-        # ?????
-        # This is supposed to move each piece to its target and see if that
-        # evades the check, but then all of the pieces it's possible to
-        # capture will be captured! There has to be a way to make a
-        # hypothetical board.
+        puts "Remaining move list: #{movelist.join(', ')}" if not movelist.empty?
+        # This next line is a workaround to 'solve' the move bug
+        @board[from].position = from
       end
+      possible.delete(from) if movelist.empty?
+      puts "Removed the possible from square #{from}."
     end
+    puts "There are no possible moves left." if possible.empty?
+    puts "Moves left: #{possible}" unless possible.empty?
     possible
   end
 
