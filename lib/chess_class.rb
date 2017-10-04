@@ -61,23 +61,54 @@ class Chess
 
   def prompt(possible)
     # Gets move input and validates it. Argument is a hash of possible_moves.
+    keys = possible.keys
+    values = possible.values
+    # 'possible' has origin squares as keys and an array of targets as values.
+    # the following hash is the opposite, targets as keys and possible origins
+    # as values. So it's 'elbissop' ─ 'possible' inverted.
+    elbissop = Hash.new
+    values.each_with_index do |array, idx|
+      array.each do |tgt|
+        if elbissop[tgt].nil?
+          existing = []
+        else
+          existing = elbissop[tgt]
+        end
+        existing << keys[idx]
+        elbissop[tgt] = existing
+      end
+    end
     from, target = nil
     loop do
-      print "Square to move from: "
-      from = gets.chomp.to_sym
-      print "Target square: "
+      print "Please make your move: "
       target = gets.chomp.to_sym
-      if possible[from].empty?
-        puts "That is not a valid start for a move."
-      elsif not possible[from].include?(target)
-        puts "You cannot move from #{from} to #{target}."
-      elsif puts_in_check?(from, target, @board)
+      option_called(target)
+      if elbissop[target].nil?
+        puts "That's not a valid move."
+        next
+      elsif elbissop[target].length > 1
+        loop do
+          puts "You can move to #{target} from: #{elbissop[target].join(', ')}."
+          print "Please choose one of these squares to move from: "
+          from = gets.chomp.to_sym
+          break if elbissop[target].include?(from)
+        end
+      else
+        from = elbissop[target][0]
+      end
+      if puts_in_check?(from, target, @board)
         puts "You cannot put yourself into check."
       else
         break
       end
     end
     return from, target
+  end
+
+  def option_called(option)
+    # A list of options and things to deal with them.
+    # Remember that option is a symbol.
+    return
   end
 
   def is_game_over(in_check, possible)
