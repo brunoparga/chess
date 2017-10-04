@@ -53,9 +53,7 @@ class Chess
       @board.display
       possible = possible_moves(@board, color)
       print_moves(@board, possible)
-      pruned = prune(@board, possible)
-      win_or_draw(@board, pruned, color)
-      from, target = prompt(pruned)
+      from, target = prompt(possible)
       effect_move(from, target)
       @board.whites_turn = !@board.whites_turn
       gets.chomp

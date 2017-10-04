@@ -18,28 +18,6 @@ module Move_checker
     possible
   end
 
-  def prune(board, possible)
-    # Remove the moves that would put the player in check.
-    possible.each do |from, targetlist|
-      targetlist.each do |target|
-        if puts_in_check?(from, target, board)
-          targetlist.delete(target)
-        end
-      end
-    end
-    possible
-  end
-
-  def win_or_draw(board, possible, color)
-    return if not possible.empty?
-    if is_check?(board, color)
-      puts "Checkmate! #{(color == :black ? "White" : "Black")} wins."
-    else
-      puts "Stalemate! It's a draw."
-    end
-
-  end
-
   def print_moves(board, possible)
     # This takes in a possible_moves hash and prints it out.
     result = ""
