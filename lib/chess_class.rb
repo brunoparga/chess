@@ -60,24 +60,71 @@ class Chess
   end
 
   def prompt(possible)
-    # Gets move input and validates it. Argument is a hash of possible_moves.
+    copy = Hash[possible]
+    puts "copy: #{copy}"
     from, target = nil
     loop do
-      print "Square to move from: "
-      from = gets.chomp.to_sym
-      print "Target square: "
+      moves_origin = Hash.new([])
+      puts "moves_origin: #{moves_origin}"
+      copy.each do |origin, move_list|
+        puts "#{origin} => #{move_list}"
+        move_list.each do |poss_target|
+          puts "poss_target is #{poss_target}"
+          moves_origin[poss_target].push(origin)
+          puts "In moves_origin: #{poss_target} => #{moves_origin[poss_target]}"
+        end
+      end
+      puts "moves_origin: #{moves_origin}"
+      print "Enter your move: "     # This will also allow options like resign
       target = gets.chomp.to_sym
-      if possible[from].empty?
-        puts "That is not a valid start for a move."
-      elsif not possible[from].include?(target)
-        puts "You cannot move from #{from} to #{target}."
-      elsif puts_in_check?(from, target, @board)
+      option_called(target)
+      if moves_origin[target].empty?
+        puts "That's not a valid move."
+        next
+      elsif moves_origin[target].length > 1
+        loop do
+          puts "You can move to #{target} from: #{moves_origin[target].join(', ')}."
+          print "Please choose one of these squares to move from: "
+          from = gets.chomp.to_sym
+          break if moves_origin[target].include?(from)
+        end
+      else
+        from = moves_origin[target][0]
+      end
+      if puts_in_check?(from, target, @board)
         puts "You cannot put yourself into check."
       else
         break
       end
     end
     return from, target
+  end
+
+  # def prompt(possible)
+  #   # Gets move input and validates it. Argument is a hash of possible_moves.
+  #   from, target = nil
+  #   loop do
+  #     print "Square to move from: "
+  #     from = gets.chomp.to_sym
+  #     print "Target square: "
+  #     target = gets.chomp.to_sym
+  #     if possible[from].empty?
+  #       puts "That is not a valid start for a move."
+  #     elsif not possible[from].include?(target)
+  #       puts "You cannot move from #{from} to #{target}."
+  #     elsif puts_in_check?(from, target, @board)
+  #       puts "You cannot put yourself into check."
+  #     else
+  #       break
+  #     end
+  #   end
+  #   return from, target
+  # end
+
+  def option_called(option)
+    # A list of options and things to deal with them.
+    # Remember that option is a symbol.
+    return
   end
 
   def is_game_over(in_check, possible)
