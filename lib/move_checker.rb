@@ -11,7 +11,9 @@ module Move_checker
     possible = Hash.new([])
     board.each do |square, piece|
       if piece.is_a?(Piece) and piece.color == color
-        # Assuming each moves method will return an array of symbols of possible targets
+        # Assume each moves method returns an array of symbols of possible
+        # targets. The king_calling variable is there to prevent an infinite
+        # loop in the castling method.
         if not king_calling
           possible[square] = piece.moves(board)
         else
@@ -22,15 +24,26 @@ module Move_checker
     possible
   end
 
-  def print_moves(board, possible)
-    # This takes in a possible_moves hash and prints it out.
-    result = ""
-    possible.each do |square, movelist|
-      unless movelist.empty?
-        result += "#{board[square].to_s.capitalize} at #{square}/#{board[square].position} can move to: #{movelist.join(' ')}\n"
+  def evade_check(board, color, possible)
+    move_hash = possible
+    # NOTE These nested enumerators are what's in common between this method and
+    # #prune, from 'fubar'. The problem must be here. NOTE
+    move_hash.each do |from, move_list|
+      helper = move_list.dup
+      helper.each do |target|
+        hypothetical_board = Board[board]
+        hypothetical_board[from].position = target
+        hypothetical_board[target] = hypothetical_board[from]
+        hypothetical_board[from] = ' '
+        if is_check?(hypothetical_board, color)
+          move_list.delete(target)
+        end
+        # This next line is a workaround to a bug that appeared during dev
+        @board[from].position = from
       end
+      possible.delete(from) if move_list.empty?
     end
-    puts result
+    possible
   end
 
   def puts_in_check?(from, target, board)
@@ -41,7 +54,6 @@ module Move_checker
     hypothetical_board[from] = ' '
     color = board[from].color
     is_check?(hypothetical_board, color)
-    # This call to is_check does not seem to trigger the bug.
   end
 
   def is_check?(board, color)
@@ -56,20 +68,6 @@ module Move_checker
     board.each do |square, piece|
       return square if piece.is_a?(King) and piece.color == color
     end
-  end
-
-  def is_game_over(in_check, possible)
-    # Returns true if the game is over either due to a checkmate or a stalemate.
-    puts "Checking if the game is over."
-    return false if not possible.empty?
-    puts "There are no possible moves."
-    if in_check
-      puts "Checkmate! #{self.board.whites_turn == true ? "Black" : "White"} wins."
-    else
-      puts "Stalemate. It's a draw."
-    end
-    gets
-    return true
   end
 
 end

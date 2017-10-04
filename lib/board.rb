@@ -1,10 +1,7 @@
 class Board < Hash
 
-  attr_accessor :whites_turn
-
   def initialize
     super
-    @whites_turn = true
     generate
   end
 
@@ -21,7 +18,6 @@ class Board < Hash
 
   def populate
     # Pieces are placed on the board one file at a time.
-    # This is the production version of the board.
     pieces_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     8.times do |file|
       eight = :"#{(97 + file).chr}8"
@@ -32,27 +28,6 @@ class Board < Hash
       self[seven] = Pawn.new(:black, seven)
       self[two] = Pawn.new(:white, two)
       self[one] = pieces_order[file].new(:white, one)
-    end
-  end
-
-  def alternate
-    # This is a simplified board, for testing purposes. This method should be
-    # stored away when dev is done. It can also be replaced once gamestate
-    # saving and loading is implemented.
-    pieces_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
-    8.times do |file|
-      eight = :"#{(97 + file).chr}8"
-      one = :"#{(97 + file).chr}1"
-      self[eight] = pieces_order[file].new(:black, eight)
-      self[one] = pieces_order[file].new(:white, one)
-    end
-    black_pawns = [:b2, :e7, :f7]
-    black_pawns.each do |square|
-      self[square] = Pawn.new(:black, square)
-    end
-    white_pawns = [:c2, :e3, :f2]
-    white_pawns.each do |square|
-      self[square] = Pawn.new(:white, square)
     end
   end
 
