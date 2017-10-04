@@ -33,6 +33,7 @@ class Pawn < Piece
     # If there's an opposing piece in either adjoining file, in the correct rank...
     [capture1, capture2].each do |target|
       if board[target].is_a?(Piece) and board[target].color != @color
+        # ... it can capture.
         moves << target
       end
     end

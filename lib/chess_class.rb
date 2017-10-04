@@ -11,8 +11,8 @@ class Chess
   attr_accessor :board
 
   def initialize
-    # The board is a hash. Each key is the symbol of the name of the square
-    # (e.g. :a1). The value is either a space or a Piece object.
+    # The board is a modified hash. Each key is the symbol of the name of the
+    # square (e.g. :a1). The value is either a space or a Piece object.
     @board = Board.new
     welcome
   end
@@ -32,7 +32,7 @@ class Chess
       when 'load'
         play_game # TODO saving and loading
       when 'quit'
-        exit
+        break
       else
         puts "I don't understand that command. Please enter 'new', 'load' or 'quit'."
       end
@@ -40,8 +40,6 @@ class Chess
   end
 
   def play_game(test_board = false)
-    system("clear")
-    puts "All right, let's get started."
     @board.populate if not test_board # This will be the correct method to call
     @board.alternate if test_board    # This is just for testing
     checkmate = false
@@ -58,13 +56,12 @@ class Chess
       from, target = prompt(possible)
       effect_move(from, target)
       @board.whites_turn = !@board.whites_turn
-      gets.chomp
+      gets
     end
   end
 
   def prompt(possible)
-    # This validates the player's input by rejecting any input that's not on the
-    # list of valid moves. The argument is a hash of possible_moves.
+    # Gets move input and validates it. Argument is a hash of possible_moves.
     from, target = nil
     loop do
       print "Square to move from: "

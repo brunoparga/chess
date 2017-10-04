@@ -27,7 +27,7 @@ module Move_checker
     result = ""
     possible.each do |square, movelist|
       unless movelist.empty?
-        result += "#{board[square].to_s.capitalize} at #{square} can move to: #{movelist.join(', ')}\n"
+        result += "#{board[square].to_s.capitalize} at #{square}/#{board[square].position} can move to: #{movelist.join(' ')}\n"
       end
     end
     puts result
@@ -52,6 +52,7 @@ module Move_checker
   end
 
   def find_king(board, color)
+    # Returns the position of the king of the given color, to help #is_check?.
     board.each do |square, piece|
       return square if piece.is_a?(King) and piece.color == color
     end
