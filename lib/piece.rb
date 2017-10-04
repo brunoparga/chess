@@ -38,9 +38,4 @@ class Piece
     movelist
   end
 
-  def to_s
-    # This is just for display purposes during testing and might go away in prod.
-    "#{self.color} #{self.class.to_s.downcase}"
-  end
-
 end

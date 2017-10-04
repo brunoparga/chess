@@ -22,17 +22,6 @@ module Move_checker
     possible
   end
 
-  def print_moves(board, possible)
-    # This takes in a possible_moves hash and prints it out.
-    result = ""
-    possible.each do |square, movelist|
-      unless movelist.empty?
-        result += "#{board[square].to_s.capitalize} at #{square}/#{board[square].position} can move to: #{movelist.join(' ')}\n"
-      end
-    end
-    puts result
-  end
-
   def puts_in_check?(from, target, board)
     # Verifies if a given move would put the player in check.
     hypothetical_board = Board[board]

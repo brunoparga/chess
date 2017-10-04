@@ -28,8 +28,6 @@ class Chess
       case choice
       when 'new'
         play_game
-      when 'test'
-        play_game(true)
       when 'load'
         play_game # TODO saving and loading
       when 'quit'
@@ -40,20 +38,17 @@ class Chess
     end
   end
 
-  def play_game(test_board = false)
-    @board.populate if not test_board # This will be the correct method to call
-    @board.alternate if test_board    # This is just for testing
+  def play_game
+    @board.populate
     loop do
       color = (@board.whites_turn ? :white : :black)
       system("clear")
       puts "#{color.capitalize} to move."
       in_check = is_check?(@board, color)
-      puts "#{color.capitalize} is in check." if in_check
       @board.display
       possible = possible_moves(@board, color)
       possible = evade_check(@board, color, possible) if in_check
       break if is_game_over(in_check, possible)
-      print_moves(@board, possible)
       from, target = prompt(possible)
       effect_move(from, target)
       @board.whites_turn = !@board.whites_turn
