@@ -76,12 +76,43 @@ class Chess
       elsif not possible[from].include?(target)
         puts "You cannot move from #{from} to #{target}."
       elsif puts_in_check?(from, target, @board)
+        # This call to puts_in_check does not seem to trigger the bug.
         puts "You cannot put yourself into check."
       else
         break
       end
     end
     return from, target
+  end
+
+  def evade_check(board, color)
+    puts "In evade_check. "
+    possible = possible_moves(board, color)
+    # NOTE These nested enumerators are what's in common between this method and
+    # #prune, from 'fubar'. The problem must be here. NOTE
+    possible.each do |from, movelist|
+      @board = board
+      helper = movelist.dup
+      puts "Analyzing #{board[from]} at #{from}/#{board[from].position}: #{movelist.join(', ')}"
+      helper.each do |target|
+        puts "Target #{target}."
+        hypothetical_board = Board[board]
+        hypothetical_board.whites_turn = board.whites_turn
+        hypothetical_board[from].position = target
+        hypothetical_board[target] = hypothetical_board[from]
+        hypothetical_board[from] = ' '
+        if is_check?(hypothetical_board, color)
+          movelist.delete(target)
+          puts "Removing #{target}. Remaining move list: #{movelist.join(', ')}"
+        end
+        # ?????
+        # This is supposed to move each piece to its target and see if that
+        # evades the check, but then all of the pieces it's possible to
+        # capture will be captured! There has to be a way to make a
+        # hypothetical board.
+      end
+    end
+    possible
   end
 
   def effect_move(from, target)

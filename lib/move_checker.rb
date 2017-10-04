@@ -22,20 +22,6 @@ module Move_checker
     possible
   end
 
-  def evade_check(board, color)
-    possible = possible_moves(board, color)
-    possible.each do |from, movelist|
-      movelist.each do |target|
-        # ?????
-        # This is supposed to move each piece to its target and see if that
-        # evades the check, but then all of the pieces it's possible to
-        # capture will be captured! There has to be a way to make a
-        # hypothetical board.
-      end
-    end
-    possible
-  end
-
   def print_moves(board, possible)
     # This takes in a possible_moves hash and prints it out.
     result = ""
@@ -53,9 +39,9 @@ module Move_checker
     hypothetical_board[from].position = target
     hypothetical_board[target] = hypothetical_board[from]
     hypothetical_board[from] = ' '
-    hypothetical_board.whites_turn = board.whites_turn
-    color = (hypothetical_board.whites_turn ? :white : :black)
+    color = board[from].color
     is_check?(hypothetical_board, color)
+    # This call to is_check does not seem to trigger the bug.
   end
 
   def is_check?(board, color)
