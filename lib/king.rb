@@ -31,14 +31,15 @@ class King < Piece
   end
 
   def can_castle(board)
-    # This method tells whether castling is possible. The actual move is
-    # handled elsewhere.
+    # This method tells whether castling is possible. Possible castles are
+    # returned in an array. The actual move is handled elsewhere.
     rank = (@color == :black ? 8 : 1)
     castle = []
     # If the king hasn't moved so far in the game...
     if not @has_moved
       # ...and the kingside rook is at its starting square...
       if board[:"h#{rank}"].is_a?(Rook) and
+        # ... and it hasn't moved...
         (not board[:"h#{rank}"].has_moved) and
         # ...and the squares between them are empty and not under attack...
         squares(board, :kingside, rank)
@@ -59,9 +60,9 @@ class King < Piece
 
   def squares(board, side, rank)
     # Verify that the necessary squares are free and unthreatened for castling.
+    return false if side == :queenside and board[:"b#{rank}"] != ' '
     pass = [:"f#{rank}", :"g#{rank}"] if side == :kingside
     pass = [:"c#{rank}", :"d#{rank}"] if side == :queenside
-    return false if side == :queenside and board[:"b#{rank}"] != ' '
     pass.each { |square| return false if board[square] != ' '}
     opponent = (@color == :black ? :white : :black)
     opp_possible = possible_moves(board, opponent, true).values.flatten

@@ -1,9 +1,5 @@
 class Piece
-  # Note on piece colors: The Unicode representations of chess pieces assume
-  # black ink on white paper. This game is being developed with a dark background
-  # coding environment and terminal. So the actual color of the pieces is reversed
-  # from their Unicode names ─ the Unicode for "black pawn" represents a white
-  # pawn, etc.
+
   attr_reader :color, :symbol
   attr_accessor :position
 
@@ -43,6 +39,7 @@ class Piece
   end
 
   def to_s
+    # This is just for display purposes during testing and might go away in prod.
     "#{self.color} #{self.class.to_s.downcase}"
   end
 
