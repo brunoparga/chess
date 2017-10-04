@@ -12,19 +12,19 @@ class Pawn < Piece
     direction = (@color == :black) ? -1 : 1
     file = @position[0].ord - 97
     rank = @position[1].to_i
-    moves = []
+    pawn_moves = []
     target1 = :"#{(file + 97).chr}#{rank + direction}"
     # If the space ahead of it is clear...
     if board[target1] == ' '
       # The pawn can move into it.
-      moves << target1
+      pawn_moves << target1
       # Furthermore, if it is in its original rank...
       if rank == (@color == :black ? 7 : 2)
         target2 = :"#{(file + 97).chr}#{rank + 2 * direction}"
         # ... and the space two ranks ahead is also clear...
         if board[target2] == ' '
           # It can move two ranks.
-          moves << target2
+          pawn_moves << target2
         end
       end
     end
@@ -34,10 +34,10 @@ class Pawn < Piece
     [capture1, capture2].each do |target|
       if board[target].is_a?(Piece) and board[target].color != @color
         # ... it can capture.
-        moves << target
+        pawn_moves << target
       end
     end
-    moves
+    pawn_moves
   end
 
 end

@@ -3,6 +3,8 @@ require_relative "move_checker"
 
 class King < Piece
 
+  # Castling requires the squares the king passes through not be threatened by
+  # opposing pieces, so Move_checker#possible_moves is used.
   include Move_checker
 
   attr_writer :has_moved

@@ -6,9 +6,9 @@ module Move_checker
   def print_moves(board, possible)
     # This takes in a possible_moves hash and prints it out.
     result = ""
-    possible.each do |square, movelist|
-      unless movelist.empty?
-        result += "#{board[square].to_s.capitalize} at #{square}/#{board[square].position} can move to: #{movelist.join(' ')}\n"
+    possible.each do |square, move_list|
+      unless move_list.empty?
+        result += "#{board[square].to_s.capitalize} at #{square}/#{board[square].position} can move to: #{move_list.join(' ')}\n"
       end
     end
     puts result

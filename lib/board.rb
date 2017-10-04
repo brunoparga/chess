@@ -1,10 +1,7 @@
 class Board < Hash
 
-  attr_accessor :whites_turn
-
   def initialize
     super
-    @whites_turn = true
     generate
   end
 
