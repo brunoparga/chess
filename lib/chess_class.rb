@@ -49,9 +49,11 @@ class Chess
       color = (@board.whites_turn ? :white : :black)
       system("clear")
       puts "#{color.capitalize} to move."
-      puts "#{color.capitalize} is in check." if is_check?(@board, color)
+      in_check = is_check?(@board, color)
+      puts "#{color.capitalize} is in check." if in_check
       @board.display
-      possible = possible_moves(@board, color)
+      possible = possible_moves(@board, color) unless in_check
+      possible = evade_check(@board, color) if in_check
       print_moves(@board, possible)
       from, target = prompt(possible)
       effect_move(from, target)

@@ -70,7 +70,7 @@ class Knight < Piece
     # Must return an array of symbols of valid targets
     file = @position[0].ord - 97
     rank = @position[1].to_i
-    moves = []
+    knight_moves = []
     ones = [-1, 1]
     twos = [-2, 2]
     ones.map do |ones|
@@ -80,12 +80,12 @@ class Knight < Piece
         [target1, target2].each do |target|
           if board[target] == ' ' or
             (board[target].is_a?(Piece) and board[target].color != @color)
-            moves << target
+            knight_moves << target
           end
         end
       end
     end
-    moves
+    knight_moves
   end
 
 end

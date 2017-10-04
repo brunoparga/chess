@@ -64,7 +64,7 @@ class King < Piece
     return false if side == :queenside and board[:"b#{rank}"] != ' '
     pass.each { |square| return false if board[square] != ' '}
     opponent = (@color == :black ? :white : :black)
-    opp_possible = possible_moves(board, opponent).values.flatten
+    opp_possible = possible_moves(board, opponent, true).values.flatten
     pass.each do |square|
       return false if opp_possible.include?(square)
     end

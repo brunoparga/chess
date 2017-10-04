@@ -5,14 +5,32 @@
 
 module Move_checker
 
-  def possible_moves(board, color)
+  def possible_moves(board, color, king_calling = false)
     # This outputs a hash where the keys are squares and the values are arrays
     # of squares reachable from the key.
     possible = Hash.new([])
     board.each do |square, piece|
       if piece.is_a?(Piece) and piece.color == color
         # Assuming each moves method will return an array of symbols of possible targets
-        possible[square] = piece.moves(board)
+        if not king_calling
+          possible[square] = piece.moves(board)
+        else
+          possible[square] = piece.moves(board) unless piece.is_a?(King)
+        end
+      end
+    end
+    possible
+  end
+
+  def evade_check(board, color)
+    possible = possible_moves(board, color)
+    possible.each do |from, movelist|
+      movelist.each do |target|
+        # ?????
+        # This is supposed to move each piece to its target and see if that
+        # evades the check, but then all of the pieces it's possible to
+        # capture will be captured! There has to be a way to make a
+        # hypothetical board.
       end
     end
     possible
