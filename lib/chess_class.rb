@@ -4,19 +4,24 @@ require_relative "pawn"
 require_relative "board"
 require_relative "move_checker"
 require_relative "move_maker"
+require_relative "notation"
 
 class Chess
   # A game of chess, playable on the command line.
 
   include Move_checker    # A module that verifies moves.
   include Move_maker      # A module that effects the moves.
+  include Notation
   attr_accessor :board, :whites_turn
+  attr_writer :moves_so_far, :move_number
 
   def initialize
     # The board is a modified hash. Each key is the symbol of the name of the
     # square (e.g. :a1). The value is either a space or a Piece object.
     @board = Board.new
     @whites_turn = true
+    @move_number = 1
+    @moves_so_far = ""
     welcome
   end
 
@@ -48,6 +53,7 @@ class Chess
       system("clear")
       puts "#{color.capitalize} to move."
       @board.display
+      puts @moves_so_far
       possible = possible_moves(@board, color)
       in_check = is_check?(@board, color)
       possible = evade_check(@board, color, possible) if in_check

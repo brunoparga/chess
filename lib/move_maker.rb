@@ -3,10 +3,12 @@ module Move_maker
   def effect_move(from, target)
     # Realizes the requested move. Assumes it is valid.
     if is_castle(from, target)
+      record_move(from, target, :castle)
       castle(from, target)
     elsif is_promotion(from, target)
       promote(from, target)
     else
+      record_move(from, target)
       @board[from].position = target
       @board[target] = @board[from]
     end
