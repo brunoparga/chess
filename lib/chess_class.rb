@@ -115,7 +115,7 @@ class Chess
     # Returns true if the game is over either due to a checkmate or a stalemate.
     return false if not possible.empty?
     if in_check
-      puts "Checkmate! #{@whites_turn == true ? "Black" : "White"} wins."
+      puts "Checkmate! #{@whites_turn ? "Black" : "White"} wins."
     else
       puts "Stalemate. It's a draw."
     end
