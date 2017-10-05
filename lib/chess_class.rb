@@ -53,6 +53,7 @@ class Chess
       possible = evade_check(@board, color, possible) if in_check
       break if is_game_over(in_check, possible)
       from, target = prompt(possible)
+      break if from == :resign or from == :draw
       effect_move(from, target)
       @whites_turn = !@whites_turn
       gets
@@ -82,7 +83,8 @@ class Chess
     loop do
       print "Please make your move: "
       target = gets.chomp.to_sym
-      option_called(target)
+      option = option_called(target)
+      return option if option == :resign or option == :draw
       if elbissop[target].nil?
         puts "That's not a valid move."
         next
@@ -108,14 +110,48 @@ class Chess
   def option_called(option)
     # A list of options and things to deal with them.
     # Remember that option is a symbol.
-    return
+    return if option.nil?
+    squares = []
+    8.downto(1) do |rank|
+      ('a'..'h').each do |file|
+        square = :"#{file}#{rank}"
+        squares << square
+      end
+    end
+    return if squares.include?(option)
+    player = (@whites_turn ? :White : :Black)
+    opponent = (@whites_turn ? :Black : :White)
+    case option
+    when :resign
+      puts "Are you sure? [y/N]"
+      choice = gets.chomp.upcase
+      return unless choice == 'Y'
+      puts "#{player} resigned. #{opponent} wins."
+      gets
+      return option
+    when :draw, :"offer draw"
+      puts "#{player} is offering a draw."
+      puts "#{opponent}, do you accept? [y/N]"
+      choice = gets.chomp.upcase
+      if choice != 'Y'
+        puts "#{opponent} rejected the draw offered by #{player}."
+        return
+      else
+        puts "#{opponent} accepted the draw offered by #{player}."
+        return :draw
+      end
+
+    else
+      puts "I don't recognize that option."
+      return
+    end
   end
 
   def is_game_over(in_check, possible)
     # Returns true if the game is over either due to a checkmate or a stalemate.
     return false if not possible.empty?
     if in_check
-      puts "Checkmate! #{@whites_turn == true ? "Black" : "White"} wins."
+      puts "Checkmate! #{@whites_turn ? "Black" : "White"} wins."
     else
       puts "Stalemate. It's a draw."
     end
