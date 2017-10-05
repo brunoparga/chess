@@ -53,11 +53,14 @@ class Chess
       system("clear")
       puts "#{color.capitalize} to move."
       @board.display
-      puts @moves_so_far
       possible = possible_moves(@board, color)
       in_check = is_check?(@board, color)
-      possible = evade_check(@board, color, possible) if in_check
+      if in_check
+        @moves_so_far[-1] = "+ "
+        possible = evade_check(@board, color, possible) if in_check
+      end
       break if is_game_over(in_check, possible)
+      puts @moves_so_far
       from, target = prompt(possible)
       break if from == :resign or from == :draw
       effect_move(from, target)
@@ -139,10 +142,12 @@ class Chess
       puts "#{player} is offering a draw."
       puts "#{opponent}, do you accept? [y/N]"
       choice = gets.chomp.upcase
+      @moves_so_far += "(=)"
       if choice != 'Y'
         puts "#{opponent} rejected the draw offered by #{player}."
         return
       else
+        @moves_so_far += "½–½"
         puts "#{opponent} accepted the draw offered by #{player}."
         return :draw
       end
@@ -157,9 +162,12 @@ class Chess
     # Returns true if the game is over either due to a checkmate or a stalemate.
     return false if not possible.empty?
     if in_check
-      puts "Checkmate! #{@whites_turn ? "Black" : "White"} wins."
+      winner = (@whites_turn ? "Black" : "White")
+      @moves_so_far[-1] = "\# #{winner == "White" ? "1-0" : "0-1" }"
+      puts "#{@moves_so_far}\nCheckmate! #{winner} wins."
     else
-      puts "Stalemate. It's a draw."
+      @moves_so_far += "½–½"
+      puts "#{@moves_so_far}\nStalemate. It's a draw."
     end
     gets
     return true

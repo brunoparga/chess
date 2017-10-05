@@ -7,6 +7,7 @@ module Move_maker
       castle(from, target)
     elsif is_promotion(from, target)
       promote(from, target)
+      record_move(from, target, :promotion)
     else
       record_move(from, target)
       @board[from].position = target
