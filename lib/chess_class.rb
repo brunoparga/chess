@@ -61,16 +61,21 @@ class Chess
       end
       break if is_game_over(in_check, possible)
       puts @moves_so_far
-      from, target = prompt(possible)
+      from, target, disambiguation = prompt(possible)
+      puts "\#play_game received disambiguation: #{disambiguation}"
       break if from == :resign or from == :draw
-      effect_move(from, target)
+      effect_move(from, target, disambiguation)
       @whites_turn = !@whites_turn
-      gets
     end
   end
 
   def prompt(possible)
     # Gets move input and validates it. Argument is a hash of possible_moves.
+    # Returns a square to move from, a square to move to, and, if necessary, a
+    # disambiguating string for notation.
+
+    # Separate the possible moves hash into its constituents to prevent the
+    # move bug.
     keys = possible.keys
     values = possible.values
     # 'possible' has origin squares as keys and an array of targets as values.
@@ -88,7 +93,7 @@ class Chess
         elbissop[tgt] = existing
       end
     end
-    from, target = nil
+    from, target, disambiguation = nil
     loop do
       print "Please make your move: "
       target = gets.chomp.to_sym
@@ -98,10 +103,16 @@ class Chess
         puts "That's not a valid move."
         next
       elsif elbissop[target].length > 1
+        # If there is more than one square that can reach the target, it is
+        # necessary to see if there's more than one piece of the same type
+        from_list = elbissop[target]
+        pieces = can_reach(from_list)
         loop do
           puts "You can move to #{target} from: #{elbissop[target].join(', ')}."
-          print "Please choose one of these squares to move from: "
+          print "Please choose where to move from: "
           from = gets.chomp.to_sym
+          disambiguation = disambiguate(from, pieces)
+          puts "Mid-method, disambiguation is #{disambiguation}"
           break if elbissop[target].include?(from)
         end
       else
@@ -113,21 +124,14 @@ class Chess
         break
       end
     end
-    return from, target
+    puts "Right before the return, disambiguation is #{disambiguation}"
+    return from, target, disambiguation
   end
 
   def option_called(option)
     # A list of options and things to deal with them.
     # Remember that option is a symbol.
-    return if option.nil?
-    squares = []
-    8.downto(1) do |rank|
-      ('a'..'h').each do |file|
-        square = :"#{file}#{rank}"
-        squares << square
-      end
-    end
-    return if squares.include?(option)
+    return if option.nil? or is_square?(option)
     player = (@whites_turn ? :White : :Black)
     opponent = (@whites_turn ? :Black : :White)
     case option
@@ -135,7 +139,7 @@ class Chess
       puts "Are you sure? [y/N]"
       choice = gets.chomp.upcase
       return unless choice == 'Y'
-      puts "#{player} resigned. #{opponent} wins."
+      puts "#{player} resigned. #{opponent} wins. Game over."
       gets
       return option
     when :draw, :"offer draw"
@@ -145,10 +149,12 @@ class Chess
       @moves_so_far += "(=)"
       if choice != 'Y'
         puts "#{opponent} rejected the draw offered by #{player}."
+        gets
         return
       else
         @moves_so_far += "½–½"
-        puts "#{opponent} accepted the draw offered by #{player}."
+        puts "#{opponent} accepted the draw offered by #{player}. Game over."
+        gets
         return :draw
       end
 
@@ -164,10 +170,10 @@ class Chess
     if in_check
       winner = (@whites_turn ? "Black" : "White")
       @moves_so_far[-1] = "\# #{winner == "White" ? "1-0" : "0-1" }"
-      puts "#{@moves_so_far}\nCheckmate! #{winner} wins."
+      puts "#{@moves_so_far}\nCheckmate! #{winner} wins. Game over."
     else
       @moves_so_far += "½–½"
-      puts "#{@moves_so_far}\nStalemate. It's a draw."
+      puts "#{@moves_so_far}\nStalemate. It's a draw. Game over."
     end
     gets
     return true

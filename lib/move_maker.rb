@@ -1,6 +1,6 @@
 module Move_maker
 
-  def effect_move(from, target)
+  def effect_move(from, target, disambiguation)
     # Realizes the requested move. Assumes it is valid.
     if is_castle(from, target)
       record_move(from, target, :castle)
@@ -9,7 +9,8 @@ module Move_maker
       promote(from, target)
       record_move(from, target, :promotion)
     else
-      record_move(from, target)
+      puts "effect_move is calling record_move with disambiguation: #{disambiguation}"
+      record_move(from, target, disambiguation)
       @board[from].position = target
       @board[target] = @board[from]
     end
