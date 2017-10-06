@@ -41,4 +41,9 @@ class Piece
     move_list
   end
 
+  def to_s
+    # Disambiguation of notation depends on this.
+    "#{self.class.to_s}"
+  end
+
 end

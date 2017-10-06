@@ -71,6 +71,30 @@ module Notation
     return (thing[0].between?('a', 'h') and thing[1].to_i.between?(1, 8))
   end
 
+  def revert(possible)
+    # Reverts a list of possible moves, such that each key is a target square
+    # and its value is the squares that can reach it.
+
+    # First off, separate the possible moves hash into its constituents to
+    # prevent the move bug.
+    keys = possible.keys
+    values = possible.values
+
+    reversed = Hash.new
+    values.each_with_index do |array, idx|
+      array.each do |tgt|
+        if reversed[tgt].nil?
+          existing = []
+        else
+          existing = reversed[tgt]
+        end
+        existing << keys[idx]
+        reversed[tgt] = existing
+      end
+    end
+    reversed
+  end
+
   def can_reach(move_list)
     # Returns a hash whose keys are piece types. The values are the pieces of
     # that type that can reach a given square.
@@ -83,7 +107,6 @@ module Notation
         pieces[piece_list[index]] << move_list[index]
       end
     end
-    puts "Pieces that can reach that target: #{pieces}"
     pieces
   end
 
@@ -96,17 +119,13 @@ module Notation
       file = choices.any? { |sq| from[0] == sq[0] }
       rank = choices.any? { |sq| from[1] == sq[1] }
       if not file
-        puts "disambiguate returning #{from[0]}"
         return from[0]
-      elsif file and not rank
-        puts "disambiguate returning #{from[1]}"
+      elsif not rank
         return from[1]
-      elsif file and rank
-        puts "disambiguate returning #{from}"
+      else
         return from.to_s
       end
     end
-
   end
 
 end
