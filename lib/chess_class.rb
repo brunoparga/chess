@@ -62,7 +62,6 @@ class Chess
       break if is_game_over(in_check, possible)
       puts @moves_so_far
       from, target, disambiguation = prompt(possible)
-      puts "\#play_game received disambiguation: #{disambiguation}"
       break if from == :resign or from == :draw
       effect_move(from, target, disambiguation)
       @whites_turn = !@whites_turn
@@ -74,25 +73,9 @@ class Chess
     # Returns a square to move from, a square to move to, and, if necessary, a
     # disambiguating string for notation.
 
-    # Separate the possible moves hash into its constituents to prevent the
-    # move bug.
-    keys = possible.keys
-    values = possible.values
-    # 'possible' has origin squares as keys and an array of targets as values.
-    # the following hash is the opposite, targets as keys and possible origins
-    # as values. So it's 'elbissop' ─ 'possible' inverted.
-    elbissop = Hash.new
-    values.each_with_index do |array, idx|
-      array.each do |tgt|
-        if elbissop[tgt].nil?
-          existing = []
-        else
-          existing = elbissop[tgt]
-        end
-        existing << keys[idx]
-        elbissop[tgt] = existing
-      end
-    end
+    # This hash is in a sense the reverse of the 'possible' hash, so its name
+    # 'possible' backwards.
+    elbissop = revert(possible)
     from, target, disambiguation = nil
     loop do
       print "Please make your move: "
@@ -100,31 +83,29 @@ class Chess
       option = option_called(target)
       return option if option == :resign or option == :draw
       if elbissop[target].nil?
-        puts "That's not a valid move."
+        puts "That is not a valid move."
         next
       elsif elbissop[target].length > 1
         # If there is more than one square that can reach the target, it is
         # necessary to see if there's more than one piece of the same type
-        from_list = elbissop[target]
-        pieces = can_reach(from_list)
+        move_list = elbissop[target]
+        pieces = can_reach(move_list)
         loop do
           puts "You can move to #{target} from: #{elbissop[target].join(', ')}."
           print "Please choose where to move from: "
           from = gets.chomp.to_sym
           disambiguation = disambiguate(from, pieces)
-          puts "Mid-method, disambiguation is #{disambiguation}"
           break if elbissop[target].include?(from)
         end
       else
         from = elbissop[target][0]
       end
       if puts_in_check?(from, target, @board)
-        puts "You cannot put yourself into check."
+        puts "That is not a valid move."
       else
         break
       end
     end
-    puts "Right before the return, disambiguation is #{disambiguation}"
     return from, target, disambiguation
   end
 
