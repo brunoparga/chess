@@ -56,7 +56,7 @@ class Chess
       in_check = is_check?(@board, color)
       if in_check
         @moves_so_far[-1] = "+ "
-        possible = evade_check(@board, color, possible) if in_check
+        possible = evade_check(@board, color, possible)
       end
       break if is_game_over(in_check, possible)
       puts @moves_so_far

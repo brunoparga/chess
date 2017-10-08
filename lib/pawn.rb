@@ -28,11 +28,12 @@ class Pawn < Piece
         end
       end
     end
+    # These are the possible squares the pawn can capture to.
     capture1 = :"#{(file + 96).chr}#{rank + direction}"
     capture2 = :"#{(file + 98).chr}#{rank + direction}"
     # If there's an opposing piece in either adjoining file, in the correct rank...
     [capture1, capture2].each do |target|
-      if board[target].is_a?(Piece) and board[target].color != @color
+      if (board[target].is_a?(Piece) and board[target].color != @color) or (target == board.en_passant)
         # ... it can capture.
         pawn_moves << target
       end
