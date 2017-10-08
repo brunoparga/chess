@@ -16,7 +16,7 @@ module Notation
     letter = which_letter(target, figurine) if args.include?(:promotion)
     # Notation includes an 'x' before the target square if there is a captured
     # piece there.
-    capture = 'x' if @board[target].is_a?(Piece)
+    capture = 'x' if @board[target].is_a?(Piece) or args.include?(:en_passant)
     # When more than one pawn can capture the same piece, they are disambiguated
     # by file.
     file = from[0]
@@ -24,7 +24,6 @@ module Notation
     # move disambiguation purposes. If that is the case, the 'strings' array
     # will not be empty and be caught below.
     strings = args.select { |arg| arg.is_a?(String) }
-    puts "In the next line disambiguation should be set to #{strings[0]}"
     if args.include?(:castle)
       # Notation for castling
       @moves_so_far += "0-0"
@@ -40,6 +39,7 @@ module Notation
     elsif capture == 'x' and @board[from].is_a?(Pawn)
       # Pawn capture is notated by pawn file
       @moves_so_far += "#{file}#{capture}#{target} "
+      @moves_so_far[-1] = "e.p. " if args.include?(:en_passant)
     elsif not strings.empty?
       # Ambiguous moves are disambiguated first by file, then by rank, and even
       # by both file and rank, if there are three (!) pieces of the same type.

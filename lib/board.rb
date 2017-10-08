@@ -1,5 +1,7 @@
 class Board < Hash
 
+  attr_accessor :en_passant
+
   def initialize
     super
     generate

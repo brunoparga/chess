@@ -20,8 +20,6 @@ class Chess
     # square (e.g. :a1). The value is either a space or a Piece object.
     @board = Board.new
     @whites_turn = true
-    @move_number = 1
-    @moves_so_far = ""
     welcome
   end
 
@@ -35,8 +33,10 @@ class Chess
       choice = gets.chomp.downcase
       case choice
       when 'new'
+        start_game
         play_game
       when 'load'
+        # load_game
         play_game # TODO saving and loading
       when 'quit'
         break
@@ -47,7 +47,6 @@ class Chess
   end
 
   def play_game
-    @board.populate
     loop do
       color = (@whites_turn ? :white : :black)
       system("clear")
@@ -57,7 +56,7 @@ class Chess
       in_check = is_check?(@board, color)
       if in_check
         @moves_so_far[-1] = "+ "
-        possible = evade_check(@board, color, possible) if in_check
+        possible = evade_check(@board, color, possible)
       end
       break if is_game_over(in_check, possible)
       puts @moves_so_far
@@ -66,6 +65,13 @@ class Chess
       effect_move(from, target, disambiguation)
       @whites_turn = !@whites_turn
     end
+  end
+
+  def start_game
+    @board.populate
+    @move_number = 1
+    @moves_so_far = ""
+    @whites_turn = true
   end
 
   def prompt(possible)
@@ -130,17 +136,19 @@ class Chess
       if choice != 'Y'
         puts "#{opponent} rejected the draw offered by #{player}."
         gets
-        return
       else
         @moves_so_far += "½–½"
         puts "#{opponent} accepted the draw offered by #{player}. Game over."
         gets
         return :draw
       end
-
+    when :save
+      savefile = File.new("saved_game.txt", "w")
+      savefile.puts @moves_so_far
+      savefile.close
+      puts "Game saved."
     else
       puts "I don't recognize that option."
-      return
     end
   end
 
