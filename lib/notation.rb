@@ -26,8 +26,8 @@ module Notation
     strings = args.select { |arg| arg.is_a?(String) }
     if args.include?(:castle)
       # Notation for castling
-      @moves_so_far += "0-0"
-      @moves_so_far += "-0" if target[0] == 'c'
+      @moves_so_far += "O-O"
+      @moves_so_far += "-O" if target[0] == 'c'
       @moves_so_far += ' '
     elsif args.include?(:promotion) and capture.nil?
       # Promotion notation must include what piece was promoted to. This is
@@ -96,16 +96,15 @@ module Notation
   end
 
   def can_reach(move_list)
-    # Returns a hash whose keys are piece types. The values are the pieces of
-    # that type that can reach a given square.
+    # Takes in a list of squares that can reach some square and returns a hash.
+    # The keys are piece types. The values are arrays containing the squares
+    # occupied by the pieces of that type that can reach the initially given square.
     piece_list = move_list.map { |sq| @board[sq].to_s }
     piece_count = piece_list.map { |piece| piece_list.count(piece) }
     pieces = Hash.new
     piece_count.each_with_index do |count, index|
-      if count > 1
-        pieces[piece_list[index]] = [] if pieces[piece_list[index]].nil?
-        pieces[piece_list[index]] << move_list[index]
-      end
+      pieces[piece_list[index]] = [] if pieces[piece_list[index]].nil?
+      pieces[piece_list[index]] << move_list[index]
     end
     pieces
   end
@@ -113,7 +112,7 @@ module Notation
   def disambiguate(from, pieces)
     # Returns a string that is used in notation to disambiguate a move.
     chosen_piece = @board[from].to_s
-    if pieces.keys.include?(chosen_piece)
+    if pieces.keys.include?(chosen_piece) and pieces[chosen_piece].length > 1
       choices = pieces[chosen_piece]
       choices.delete(from)
       file = choices.any? { |sq| from[0] == sq[0] }

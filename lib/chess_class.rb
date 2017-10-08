@@ -36,14 +36,81 @@ class Chess
         start_game
         play_game
       when 'load'
-        # load_game
-        play_game # TODO saving and loading
+        load_game
+        play_game
       when 'quit'
         break
       else
         puts "I don't understand that command. Please enter 'new', 'load' or 'quit'."
       end
     end
+  end
+
+  def start_game
+    # Just basic tasks that are necessary at the beginning of the game.
+    # Loaded games build on this.
+    @board.populate
+    @move_number = 1
+    @moves_so_far = ""
+    @whites_turn = true
+  end
+
+  def load_game
+    load_game = File.read("saved_game.txt")
+    past_moves = load_game.scan(/(?:\d+\. )?([KQRBN]?x?[a-h1-8]?x?[a-h][1-8]|O-O-O|O-O)[\+\?!#(?:e.p.)]*/)
+    start_game
+    loop do
+      color = (@whites_turn ? :white : :black)
+      system("clear")
+      possible = possible_moves(@board, color)
+      from, target, disambiguation = read_move(possible, past_moves)
+      break if from == :done
+      effect_move(from, target, disambiguation)
+      @board.display
+      @whites_turn = !@whites_turn
+      gets
+    end
+  end
+
+  def read_move(possible, moves)
+    # This should return the same thing as the prompt method, but reading from
+    # the saved game.
+    from, target, disambiguation = nil
+    move = moves.shift
+    return :done if move.nil?
+    move = move[0]
+    move.delete("x")
+    if move[0] == 'O' or move[0] == '0'
+      rank = (@whites_turn ? '1' : '8')
+      from = :"e#{rank}"
+      target = (move.length > 3 ? :"c#{rank}" : :"g#{rank}")
+    else
+      target = move.slice(-2..-1).to_sym
+      elbissop = revert(possible)
+      if elbissop[target].length == 1
+        from = elbissop[target][0]
+      else
+        move_list = elbissop[target]
+        pieces = can_reach(move_list)
+        piece_moved = case move[0]
+        when 'K' then 'King'
+        when 'Q' then 'Queen'
+        when 'R' then 'Rook'
+        when 'B' then 'Bishop'
+        when 'N' then 'Knight'
+        else 'Pawn'
+        end
+        if pieces[piece_moved].length == 1
+          from = pieces[piece_moved][0]
+        else
+          disambiguation = move[-3]
+          pieces[piece_moved].each do |square|
+            from = square if disambiguation == square[0] or disambiguation == square[1]
+          end
+        end
+      end
+    end
+    return from, target, disambiguation
   end
 
   def play_game
@@ -65,13 +132,6 @@ class Chess
       effect_move(from, target, disambiguation)
       @whites_turn = !@whites_turn
     end
-  end
-
-  def start_game
-    @board.populate
-    @move_number = 1
-    @moves_so_far = ""
-    @whites_turn = true
   end
 
   def prompt(possible)
